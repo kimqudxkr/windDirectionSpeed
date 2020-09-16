@@ -14,9 +14,9 @@ body {
 }
 
 .navbar .navbar-nav .nav-item a.current {
-  color: rgb(0, 17, 255);
+  color: rgb(43, 255, 0);
 }
 
-.navbar .navbar-nav .nav-item a:hover {
-  color: rgb(43, 255, 0);
+.navbar .navbar-nav .nav-item a:hover:not(.current) {
+  color: rgb(123, 158, 125);
 }

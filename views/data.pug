@@ -157,7 +157,7 @@ block content
     .row.info-search
       .col-12
         .row
-          .col-2 ■ 기간 설정
+          .col-3 ■ 기간 설정
           .col-2
             select#term(type="text", style="width:150px", onchange="selectDate(this)")
               option(value="user") 사용자 정의
@@ -165,7 +165,7 @@ block content
               option(value="quater") 분기간
               option(value="month") 월간
               option(value="week") 주간
-          .col-8
+          .col-6
             select#yearTerm(type='text', style='display:none; margin:5px', onchange="changeWeek()")
               -for(let i=2020; i>2005;i--)
                 option(value=i)=(i)+'년'
@@ -180,13 +180,13 @@ block content
                 option(value=i)=(i)+'주차'
             button.btn.btn-dark(onClick='infoSearching()') 조회
         .row
-          .col-2 ■ 사용자 정의 설정
-          .col-3 시작 날짜 : 
+          .col-3 ■ 사용자 정의 설정    
+          .col-4 시작 날짜 : 
             input#startDay(type="input", style="margin:8px; width:100px")
             select#startHour(style="width:60px; margin:8px")
                 -for (let i = 0; i < 24; i++)
                   option(value=i < 10 ? '0' + i : i)= (i < 10 ? '0' + i : i)+'시'
-          .col-3 종료 날짜 : 
+          .col-4 종료 날짜 : 
             input#endDay(type="input", style="margin:8px; width:100px")  
             select#endHour(style="width:60px; margin:8px")
                 -for (let i = 0; i < 24; i++)

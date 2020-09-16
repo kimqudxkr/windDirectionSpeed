@@ -69,27 +69,6 @@
   line-height: 0px;
 }
 
-#info-container .info-count {
-  margin: 10px 0px;
-  border: 1px solid #000;
-  background-color: #f3f3f3;
-}
-
-#info-container .info-count .row {
-  height: 50px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin: 5px;
-  font-size: 20px;
-}
-
-#info-container .info-count .col-2 {
-  font-size: 20px;
-  border-right: 1px solid black;
-  align-items: center;
-}
-
 #info-container .info-table {
   justify-content: center;
 }
@@ -101,6 +80,8 @@
 
 #info-container #info-table {
   border-top: 2px solid #000;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #info-container #info-table th {

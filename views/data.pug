@@ -1,6 +1,209 @@
 extends layout
 
 block content
-  p
-  h1 This page is Data
-  p Welcome to Data
+  link(rel='stylesheet', href='/stylesheets/info.css')
+
+  script.
+    document.getElementById("data").className="current";
+
+    $( function() {
+      $("#startDay").datepicker({defaultDate: new Date()}).val(moment().format('YYYY-MM-DD'));
+      $("#endDay").datepicker({defaultDate: new Date()}).val(moment().format('YYYY-MM-DD'));
+    });
+
+    const infoSearching = () => {
+      search();
+    }
+    
+    const getWeek = (dateFormat) => {
+      const the = new Date(dateFormat);
+      var newYear = new Date(the.getFullYear(),0,1);      
+      var day = newYear.getDay();                         
+      day = (day >= 0 ? day : day + 7);
+      var daynum = Math.floor((the.getTime() - newYear.getTime() -
+        (the.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
+      var weeknum;
+      if(day < 4) {
+        weeknum = Math.floor((daynum+day-1)/7) + 1;
+        if(weeknum > 52) {
+          let nYear = new Date(the.getFullYear() + 1,0,1);
+          let nday = nYear.getDay();
+          nday = nday >= 0 ? nday : nday + 7;
+          weeknum = nday < 4 ? 1 : 53;
+        }
+      }
+      else {
+        weeknum = Math.floor((daynum+day-1)/7);
+      }
+      return weeknum;
+    }
+
+    const changeWeek = () => {
+      let year = document.getElementById("yearTerm").value;
+      let month = document.getElementById("monthTerm").value;
+
+      const first = getWeek(`${year}-${month}-01`);
+      const last = getWeek(new Date(year, month, -1));
+
+      const diff = last-first+1;
+
+      $('#weekTerm').empty();
+
+      for(let i = 0; i<diff; i++) {
+        const option = $("<option value=\""+(i+1)+"\">"+(i+1)+"주차</option>");
+        $('#weekTerm').append(option);
+      }
+    }
+
+    const search = () => {
+      const form =  document.getElementById("infoSearchForm");
+      
+      const s = document.getElementById("term");
+      const setting = s.options[s.selectedIndex].value;
+
+      $.ajax({
+        data: {
+          'setting': setting,
+          'startDay': document.getElementById("startDay").value,
+          'startHour': document.getElementById("startHour").value,
+          'endDay': document.getElementById("endDay").value,
+          'endHour': document.getElementById("endHour").value,
+          'year': document.getElementById("yearTerm").value,
+          'quater': document.getElementById("quaterTerm").value,
+          'month': document.getElementById("monthTerm").value,
+          'week': document.getElementById("weekTerm").value,
+        }, 
+        type: 'get', 
+        dataType : 'html', 
+        url: "/data/api/search", 
+        contentType: 'application/json', 
+        success: (result) => {
+          $("#info-table > tbody").html(result);
+        },
+        error: (err) => {
+          console.log(err)
+        }
+      })
+
+      $.ajax({
+        data: {
+          'setting': setting,
+          'startDay': document.getElementById("startDay").value,
+          'startHour': document.getElementById("startHour").value,
+          'endDay': document.getElementById("endDay").value,
+          'endHour': document.getElementById("endHour").value,
+          'year': document.getElementById("yearTerm").value,
+          'quater': document.getElementById("quaterTerm").value,
+          'month': document.getElementById("monthTerm").value,
+          'week': document.getElementById("weekTerm").value,
+        }, 
+        type: 'get', 
+        dataType : 'html', 
+        url: "/data/api/search/count", 
+        contentType: 'application/json', 
+        success: (result) => {
+          $(".fine").html(result);
+        },
+        error: (err) => {
+          console.log(err)
+        }
+      })
+    }
+
+    const selectDate = (e) => {
+      if(e.value != 'user') {
+        document.getElementById("startDay").disabled = true;
+        document.getElementById("endDay").disabled = true;
+        document.getElementById("startHour").disabled = true;
+        document.getElementById("endHour").disabled = true;
+      } else {
+        document.getElementById("startDay").disabled = false;
+        document.getElementById("endDay").disabled = false;
+        document.getElementById("startHour").disabled = false;
+        document.getElementById("endHour").disabled = false;
+      }
+
+      if(e.value == 'year') 
+        document.getElementById("yearTerm").style.display = "inline";
+      else 
+        document.getElementById("yearTerm").style.display = "none";
+      
+      if(e.value == 'quater') {
+        document.getElementById("yearTerm").style.display = "inline";
+        document.getElementById("quaterTerm").style.display = "inline";
+      } else {
+        document.getElementById("quaterTerm").style.display = "none";
+      }
+
+      if(e.value == 'month') {
+        document.getElementById("yearTerm").style.display = "inline";
+        document.getElementById("monthTerm").style.display = "inline";
+      } else {
+        document.getElementById("monthTerm").style.display = "none";
+      }
+
+      if(e.value == 'week') {
+        document.getElementById("yearTerm").style.display = "inline";
+        document.getElementById("monthTerm").style.display = "inline";
+        document.getElementById("weekTerm").style.display = "inline";
+      }
+      else 
+        document.getElementById("weekTerm").style.display = "none";
+    }
+
+  #info-container.container-fluid
+    .row.info-title
+      .col-12 측정자료 조회
+    .row.info-search
+      .col-12
+        .row
+          .col-2 ■ 기간 설정
+          .col-2
+            select#term(type="text", style="width:150px", onchange="selectDate(this)")
+              option(value="user") 사용자 정의
+              option(value="year") 연간
+              option(value="quater") 분기간
+              option(value="month") 월간
+              option(value="week") 주간
+          .col-8
+            select#yearTerm(type='text', style='display:none; margin:5px', onchange="changeWeek()")
+              -for(let i=2020; i>2005;i--)
+                option(value=i)=(i)+'년'
+            select#quaterTerm(type='text', style='display:none; margin:5px')
+              -for(let i=1; i<5;i++)
+                option(value=i)=(i)+'사분기'
+            select#monthTerm(type='text', style='display:none; margin:5px', onchange="changeWeek()")
+              -for(let i=1; i<13;i++)
+                option(value=i)=(i)+'월'
+            select#weekTerm(type='text', style='display:none; margin:5px')
+              -for(let i=1; i<7;i++)
+                option(value=i)=(i)+'주차'
+            button.btn.btn-dark(onClick='infoSearching()') 조회
+        .row
+          .col-2 ■ 사용자 정의 설정
+          .col-3 시작 날짜 : 
+            input#startDay(type="input", style="margin:8px; width:100px")
+            select#startHour(style="width:60px; margin:8px")
+                -for (let i = 0; i < 24; i++)
+                  option(value=i < 10 ? '0' + i : i)= (i < 10 ? '0' + i : i)+'시'
+          .col-3 종료 날짜 : 
+            input#endDay(type="input", style="margin:8px; width:100px")  
+            select#endHour(style="width:60px; margin:8px")
+                -for (let i = 0; i < 24; i++)
+                  option(value=i < 10 ? '0' + i : i)= (i < 10 ? '0' + i : i)+'시'
+    .row.info-table
+      .col-12
+        div 측정자료(수치) 
+        table#info-table
+          thead
+            tr
+              th 날짜<br/>(연-월-일)
+              th 풍향
+              th 풍속(m/s)
+          tbody
+            each map in datas
+              tr
+                td #{map.rgst_dt}
+                td 
+                  img.wind-direction-icon(src="images/Black_Arrow.png", alt="wind-direction" style={ width: '40px', transform: `rotate(${map.windDirection}deg)`})
+                td #{map.windSpeed} (m/s)

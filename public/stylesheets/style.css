@@ -3,6 +3,20 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+.navbar {
+  margin:0;
+  padding:0;
+}
+
+.navbar .navbar-nav .nav-item a {
+  color:white;
+  text-decoration: none;
+}
+
+.navbar .navbar-nav .nav-item a.current {
+  color: rgb(0, 17, 255);
+}
+
+.navbar .navbar-nav .nav-item a:hover {
+  color: rgb(43, 255, 0);
 }

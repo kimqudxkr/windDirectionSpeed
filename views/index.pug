@@ -1,9 +1,72 @@
 extends layout
 
 block content
+  link(rel='stylesheet', href='/stylesheets/real.css')
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/export-data.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
   script.
     document.getElementById("real").className="current";
+    let i=0;
+    let dataset;
 
-  a:hover() Express
-  p Welcome to Express
-  p #{result}
+  .row
+    .col-5
+      h1(style='text-align:center') 실시간 자료 조회
+
+      table#nowTable
+        tr
+          th(colspan='2', style='background-color:#dadada') 실시간 데이터
+        tr 
+          th 시간
+          td #{datas[0].rgst_dt}
+        tr
+          th 풍속
+          td #{datas[0].windSpeed} (m/s)
+        tr
+          th 풍향
+          td
+            img.wind-direction-icon(src="images/Black_Arrow.png", alt="wind-direction" style={ height: '100px', width: '100px', transform: `rotate(${datas[0].windDirection}deg)`})
+    .col-6
+      h1(style='text-align:center') 최근 10시간 데이터
+      .container
+        canvas#myChart
+
+      script.
+        const greenBg = 'rgba(43,255,0,0.4)';
+        const greenBd = 'rgba(43, 255, 0, 1)';
+        const ctx = document.getElementById('myChart'); 
+        const myChart = new Chart(ctx, { 
+          type: 'bar', 
+          data: { 
+            labels: [],
+            datasets: [{ label: '풍속(m/s) ', data: [], 
+            backgroundColor: [greenBg, greenBg, greenBg, greenBg, greenBg, greenBg, greenBg, greenBg, greenBg, greenBg], 
+            borderColor: [greenBd, greenBd, greenBd, greenBd, greenBd, greenBd, greenBd, greenBd, greenBd, greenBd ], 
+            borderWidth: 1
+            }]
+          }, 
+          options: { 
+            scales: { 
+              yAxes: [{ 
+                ticks: { beginAtZero: true }
+              }]
+            }
+          }
+        });
+
+    -for(let i=0; i<10; i++)
+      input(id='day'+i, type='hidden', value=datas[i].rgst_dt)
+      input(id='val'+i, type='hidden', value=datas[i].windSpeed)
+      script.
+        myChart.data.labels.push(document.getElementById('day'+i).value);
+
+        myChart.data.datasets.forEach((dataset) => {
+          dataset.data.push(document.getElementById('val'+i).value);
+        })
+
+        i++;
+        myChart.update();

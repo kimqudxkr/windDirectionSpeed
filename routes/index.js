@@ -16,17 +16,33 @@ router.get('/', function(req, res, next) {
       GROUP BY SUBSTR(rgst_dt, 1, 13) 
       ORDER BY rgst_dt DESC LIMIT 10
     `;
-  
+    
+    let latest;
+    connection.query(`select windDirection, windSpeed, rgst_dt
+                      FROM finedust_tb ORDER BY logIdx DESC LIMIT 1`, (err, res) => {
+                        if(!err) {
+                          latest=res;
+                        } else {
+                          res.render('index',err);
+                        }
+                      })
+
     connection.query(query, (err, rows, fields) => {
       if (!err) {
         res.render('index', {'datas': rows.map(data => {
                                               return {
                                                 windDirection: data.windDirection,
                                                 windSpeed: data.windSpeed,
-                                                rgst_dt: moment(data.rgst_dt).format('YYYY-MM-DD HH:MM:SS')
+                                                rgst_dt: moment(data.rgst_dt).format('YYYY-MM-DD HH:mm:SS')
                                               }
                                             })
-                                    });
+                                            ,'latest': latest.map(data => {
+                                              return {
+                                                windDirection: data.windDirection,
+                                                windSpeed: data.windSpeed,
+                                                rgst_dt: moment(data.rgst_dt).format('YYYY-MM-DD HH:mm:SS')
+                                              }
+                                            })});
       }
       else {
         console.log(err);

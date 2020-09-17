@@ -22,14 +22,14 @@ block content
           th(colspan='2', style='background-color:#dadada') 실시간 데이터
         tr 
           th 시간
-          td #{datas[0].rgst_dt}
+          td #{latest[0].rgst_dt}
         tr
           th 풍속
-          td #{datas[0].windSpeed} (m/s)
+          td #{latest[0].windSpeed}
         tr
           th 풍향
           td
-            img.wind-direction-icon(src="images/Black_Arrow.png", alt="wind-direction" style={ height: '100px', width: '100px', transform: `rotate(${datas[0].windDirection}deg)`})
+            img.wind-direction-icon(src="images/Black_Arrow.png", alt="wind-direction" style={ height: '100px', width: '100px', transform: `rotate(${latest[0].windDirection}deg)`})
     .col-6
       h1(style='text-align:center') 최근 10시간 데이터
       .container

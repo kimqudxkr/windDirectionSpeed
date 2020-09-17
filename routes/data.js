@@ -73,19 +73,26 @@ const connection = require('./connection');
       if (!err) {
         let result;
         const dateFormat = {'13': 'MM-DD:HH', '10': 'YYYY-MM-DD', '18': 'MM-DD HH:mm:ss'};
-  
-        rows.forEach(data => {
-          const html = `
-            <tr>
-              <td>${moment(data.rgst_dt).format(dateFormat['10'])}</td>
-              <td>
-                <img class="wind-direction-icon" src="images/Black_Arrow.png" alt="wind-direction" style="width: 40px; transform: rotate(${data.windDirection}deg);" />
-              </td>
-              <td>${data.windSpeed} (m/s)</td>
-            </tr>
-          `
-          result += html;
-        });
+
+        if(JSON.stringify(rows)=='[]') {
+          result = `
+          <tr>
+            <td colspan="3">No Data</td>
+          </tr>`
+        } else {      
+          rows.forEach(data => {
+            const html = `
+              <tr>
+                <td>${moment(data.rgst_dt).format(dateFormat['10'])}</td>
+                <td>
+                  <img class="wind-direction-icon" src="images/Black_Arrow.png" alt="wind-direction" style="width: 40px; transform: rotate(${data.windDirection}deg);" />
+                </td>
+                <td>${data.windSpeed} (m/s)</td>
+              </tr>
+            `
+            result += html;
+          });
+        } 
         res.send(result);
       }
       else {

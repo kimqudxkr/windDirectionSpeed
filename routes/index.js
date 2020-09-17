@@ -33,7 +33,7 @@ router.get('/', function(req, res, next) {
                                               return {
                                                 windDirection: data.windDirection,
                                                 windSpeed: data.windSpeed,
-                                                rgst_dt: moment(data.rgst_dt).format('YYYY-MM-DD HH:mm:SS')
+                                                rgst_dt: moment(data.rgst_dt).format('MM-DD HH')
                                               }
                                             })
                                             ,'latest': latest.map(data => {

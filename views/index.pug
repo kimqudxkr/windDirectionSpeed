@@ -16,7 +16,7 @@ block content
   .row
     .col-5
       h1(style='text-align:center') 실시간 자료 조회
-
+      br
       table#nowTable
         tr
           th(colspan='2', style='background-color:#dadada') 실시간 데이터
@@ -43,7 +43,7 @@ block content
           type: 'bar', 
           data: { 
             labels: [],
-            datasets: [{ label: '풍속(m/s) ', data: [], 
+            datasets: [{ label: '평균 풍속(m/s) ', data: [], 
             backgroundColor: [greenBg, greenBg, greenBg, greenBg, greenBg, greenBg, greenBg, greenBg, greenBg, greenBg], 
             borderColor: [greenBd, greenBd, greenBd, greenBd, greenBd, greenBd, greenBd, greenBd, greenBd, greenBd ], 
             borderWidth: 1

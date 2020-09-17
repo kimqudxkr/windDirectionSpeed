@@ -7,8 +7,8 @@ block content
     document.getElementById("data").className="current";
 
     $( function() {
-      $("#startDay").datepicker({defaultDate: new Date()}).val(moment().format('YYYY-MM-DD'));
-      $("#endDay").datepicker({defaultDate: new Date()}).val(moment().format('YYYY-MM-DD'));
+      $("#startDay").datepicker({defaultDate: new Date(), dateFormat: 'yy-mm-dd'}).val(moment().format('YYYY-MM-DD'));
+      $("#endDay").datepicker({defaultDate: new Date(), dateFormat: 'yy-mm-dd'}).val(moment().format('YYYY-MM-DD'));
     });
 
     const infoSearching = () => {
@@ -79,30 +79,6 @@ block content
         contentType: 'application/json', 
         success: (result) => {
           $("#info-table > tbody").html(result);
-        },
-        error: (err) => {
-          console.log(err)
-        }
-      })
-
-      $.ajax({
-        data: {
-          'setting': setting,
-          'startDay': document.getElementById("startDay").value,
-          'startHour': document.getElementById("startHour").value,
-          'endDay': document.getElementById("endDay").value,
-          'endHour': document.getElementById("endHour").value,
-          'year': document.getElementById("yearTerm").value,
-          'quater': document.getElementById("quaterTerm").value,
-          'month': document.getElementById("monthTerm").value,
-          'week': document.getElementById("weekTerm").value,
-        }, 
-        type: 'get', 
-        dataType : 'html', 
-        url: "/data/api/search/count", 
-        contentType: 'application/json', 
-        success: (result) => {
-          $(".fine").html(result);
         },
         error: (err) => {
           console.log(err)

@@ -7,30 +7,30 @@ block content
     document.getElementById("data").className="current";
 
     $( function() {
-      $("#startDay").datepicker({defaultDate: new Date(), dateFormat: 'yy-mm-dd', showMonthAfterYear: true,
-                                monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-                                dayNamesMin: ['일', '월', '화', '수', '목', '금', '토']}).val(moment().format('YYYY-MM-DD'));
-      $("#endDay").datepicker({defaultDate: new Date(), dateFormat: 'yy-mm-dd', showMonthAfterYear: true,
-                                monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-                                dayNamesMin: ['일', '월', '화', '수', '목', '금', '토']}).val(moment().format('YYYY-MM-DD'));
-    });
+      $.datepicker.setDefaults({
+        defaultDate: new Date(),
+        dateFormat: 'yy-mm-dd',
+        showMonthAfterYear: true,
+        monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+      });
 
-    const infoSearching = () => {
-      search();
-    }
+      $("#startDay").datepicker().val(moment().format('YYYY-MM-DD'));
+      $("#endDay").datepicker().val(moment().format('YYYY-MM-DD'));
+    });
     
     const getWeek = (dateFormat) => {
       const the = new Date(dateFormat);
-      var newYear = new Date(the.getFullYear(),0,1);      
-      var day = newYear.getDay();                         
+      const newYear = new Date(the.getFullYear(),0,1);      
+      let day = newYear.getDay();                         
       day = (day >= 0 ? day : day + 7);
-      var daynum = Math.floor((the.getTime() - newYear.getTime() -
+      const daynum = Math.floor((the.getTime() - newYear.getTime() -
         (the.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
-      var weeknum;
+      let weeknum;
       if(day < 4) {
         weeknum = Math.floor((daynum+day-1)/7) + 1;
         if(weeknum > 52) {
-          let nYear = new Date(the.getFullYear() + 1,0,1);
+          const nYear = new Date(the.getFullYear() + 1,0,1);
           let nday = nYear.getDay();
           nday = nday >= 0 ? nday : nday + 7;
           weeknum = nday < 4 ? 1 : 53;
@@ -43,8 +43,8 @@ block content
     }
 
     const changeWeek = () => {
-      let year = document.getElementById("yearTerm").value;
-      let month = document.getElementById("monthTerm").value;
+      const year = document.getElementById("yearTerm").value;
+      const month = document.getElementById("monthTerm").value;
 
       const first = getWeek(`${year}-${month}-01`);
       const last = getWeek(new Date(year, month, -1));
@@ -62,12 +62,12 @@ block content
     const search = () => {
       const form =  document.getElementById("infoSearchForm");
       
-      const s = document.getElementById("term");
-      const setting = s.options[s.selectedIndex].value;
+      const termSelectBox = document.getElementById("term");
+      const termSetting = termSelectBox.options[termSelectBox.selectedIndex].value;
 
       $.ajax({
         data: {
-          'setting': setting,
+          'termSetting': termSetting,
           'startDay': document.getElementById("startDay").value,
           'startHour': document.getElementById("startHour").value,
           'endDay': document.getElementById("endDay").value,
@@ -96,7 +96,8 @@ block content
         document.getElementById("endDay").disabled = true;
         document.getElementById("startHour").disabled = true;
         document.getElementById("endHour").disabled = true;
-      } else {
+      } 
+      else {
         document.getElementById("startDay").disabled = false;
         document.getElementById("endDay").disabled = false;
         document.getElementById("startHour").disabled = false;
@@ -111,14 +112,16 @@ block content
       if(e.value == 'quater') {
         document.getElementById("yearTerm").style.display = "inline";
         document.getElementById("quaterTerm").style.display = "inline";
-      } else {
+      } 
+      else {
         document.getElementById("quaterTerm").style.display = "none";
       }
 
       if(e.value == 'month') {
         document.getElementById("yearTerm").style.display = "inline";
         document.getElementById("monthTerm").style.display = "inline";
-      } else {
+      } 
+      else {
         document.getElementById("monthTerm").style.display = "none";
       }
 
@@ -158,7 +161,7 @@ block content
             select#weekTerm(type='text', style='display:none; margin:5px')
               -for(let i=1; i<7;i++)
                 option(value=i)=(i)+'주차'
-            button.btn.btn-dark(onClick='infoSearching()') 조회
+            button.btn.btn-dark(onClick='search()') 조회
         .row
           .col-3 ■ 사용자 정의 설정    
           .col-4 시작 날짜 : 
@@ -173,7 +176,7 @@ block content
                   option(value=i < 10 ? '0' + i : i)= (i < 10 ? '0' + i : i)+'시'
     .row.info-table
       .col-12
-        div(style='margin-left:390px') 측정자료(수치) 
+        div(style='margin-left:470px') 측정자료(수치) 
         table#info-table
           thead
             tr
@@ -183,7 +186,7 @@ block content
           tbody
             each map in datas
               tr
-                td #{map.rgst_dt}
+                td #{map.rgstDt}
                 td 
                   img.wind-direction-icon(src="images/Black_Arrow.png", alt="wind-direction" style={ width: '40px', transform: `rotate(${map.windDirection}deg)`})
                 td #{map.windSpeed} (m/s)

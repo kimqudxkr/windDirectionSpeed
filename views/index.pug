@@ -10,21 +10,58 @@ block content
 
   script.
     document.getElementById("real").className="current";
-    let count = 0;    //차트 날짜와 데이터 표시를 위한 전역 변수 선언
+
+    $(document).ready(function() {
+      updateData();
+      updateChart();
+      });
 
     setInterval(function() {  
       updateData();
     }, 2000);
 
+    setInterval(function() {
+      updateChart();
+    }, 3600000);
+    
     const updateData = () => {
       $.ajax({
-        data: {},
         type: 'get', 
         dataType : 'html', 
         url: "/api/updateData", 
         contentType: 'application/json', 
         success: (html) => {
-          $("#info-table > tbody").html(html);
+          $("#nowTable > tbody").html(html);
+        },
+        error: (err) => {
+          console.log(err)
+        }
+      })
+    }
+
+    const updateChart = () => {
+      $.ajax({
+        type: 'get', 
+        dataType : 'json', 
+        url: "/api/updateChart", 
+        contentType: 'application/json', 
+        success: (result) => {
+          $.each(result, function(index, item) {
+            for(let i=0; i<10; i++) {
+              myChart.data.labels.splice(-1,1);
+              myChart.data.datasets.forEach((datasets) => {
+                datasets.data.pop();
+              });
+            }
+
+            for(let i=0; i<10; i++) {
+              myChart.data.labels.push(item[i].rgstDt);
+              myChart.data.datasets.forEach((datasets) => {
+                datasets.data.push(item[i].windSpeed);
+              });
+            }
+          })
+          myChart.update();
         },
         error: (err) => {
           console.log(err)
@@ -41,16 +78,6 @@ block content
           tr
             th(colspan='2', style='background-color:#dadada') 실시간 데이터
         tbody
-          tr 
-            th 시간
-            td #{latest[0].rgstDt}
-          tr
-            th 풍향
-            td
-              img.wind-direction-icon(src="images/Black_Arrow.png", alt="wind-direction" style={ height: '100px', width: '100px', transform: `rotate(${latest[0].windDirection}deg)`})
-          tr
-            th 풍속
-            td #{latest[0].windSpeed}
     .col-6
       h1(style='text-align:center') 최근 10시간 데이터
       .container
@@ -64,10 +91,11 @@ block content
           type: 'bar', 
           data: { 
             labels: [],
-            datasets: [{ label: '평균 풍속(m/s) ', data: [], 
-                          backgroundColor: [], 
-                          borderColor: [], 
-                          borderWidth: 1
+            datasets: [{ label: '평균 풍속(m/s) ', 
+                         data: [], 
+                         backgroundColor: [], 
+                         borderColor: [], 
+                         borderWidth: 1
                       }]
           }, 
           options: { 
@@ -87,20 +115,3 @@ block content
             borderColor.borderColor.push(greenBd);
           });
         }
-
-    //- 여기서부터는 백엔드에서 받아온 데이터를 html 상에선 사용할 수 있지만 script 속에서는 사용할 수 없음
-    //- (html에서 데이터를 다 받아와 페이지에 표시한 후 script가 돌기 때문에 반복문을 돌려도 항상 마지막 값만 조회됨)
-    //- 그래서 받아온 데이터를 반복문을 이용하여 hidden 옵션으로 안보이게 받아온 후 하나씩 참조하여 데이터를 차트에 삽입
-    //- 이를 위하여 맨 위에 script에서 count를 전역 변수로 선언
-    -for(let i=0; i<10; i++)
-      input(id='day'+i, type='hidden', value=datas[i].rgstDt)
-      input(id='val'+i, type='hidden', value=datas[i].windSpeed)
-      script.
-        myChart.data.labels.push(document.getElementById('day'+count).value);
-
-        myChart.data.datasets.forEach((datasets) => {
-          datasets.data.push(document.getElementById('val'+count).value);
-        });
-
-        count++;
-        myChart.update();

@@ -19,6 +19,12 @@ block content
       $("#endDay").datepicker().val(moment().format('YYYY-MM-DD'));
     });
     
+    jQuery('document').ready(function() {
+      pagination();
+
+      jQuery('.pagination li:first-child').addClass("disabled");
+    });
+
     const getWeek = (dateFormat) => {
       const the = new Date(dateFormat);
       const newYear = new Date(the.getFullYear(),0,1);      
@@ -83,6 +89,8 @@ block content
         contentType: 'application/json', 
         success: (result) => {
           $("#info-table > tbody").html(result);
+          jQuery('.pagination *').remove();
+          pagination();
         },
         error: (err) => {
           console.log(err)
@@ -134,6 +142,63 @@ block content
         document.getElementById("weekTerm").style.display = "none";
     }
 
+    const pagination = () => {
+      const rowNum = 10;
+      let $tr = jQuery('tbody tr');
+      const totalRowNum = $tr.length;
+      let pagesNum = 0;
+
+      if(totalRowNum % rowNum == 0) {
+        pagesNum = totalRowNum / rowNum;
+      }
+      else if(totalRowNum % rowNum > 0) {
+        pagesNum = totalRowNum / rowNum;
+        pagesNum++;
+        pagesNum = Math.floor(pagesNum++);
+      }
+
+      for(let i=1; i<=pagesNum; i++) {
+        jQuery('.pagination').append(`<li><button class="btn-dark">${i}</button></li>`);
+        jQuery('.pagination li:nth-child(1)').addClass("active");
+        jQuery('.pagination button').addClass("pagination-link");
+      }
+
+      $tr.each(function(i) {
+        jQuery(this).hide();
+
+        if(i+1 <= rowNum) {
+          $tr.eq(i).show();
+        }
+      });
+
+      jQuery('.pagination li:nth-child(1)').children(":first").removeClass("btn-dark");
+
+      jQuery('.pagination button').click('.pagination-link', function(e) {
+        e.preventDefault();
+        $tr.hide();
+        let page = jQuery(this).text();
+        let tmp = page - 1;
+        let start = tmp * rowNum;
+        let currentLink = tmp;
+
+        jQuery('.pagination button').addClass("btn-dark");
+        jQuery(this).removeClass("btn-dark");
+        jQuery('.pagination li').removeClass("active");
+        jQuery(this).parent().addClass("active");
+
+        for(let i=0; i<rowNum; i++) {
+          $tr.eq(start+i).show();
+        }
+
+        if(tmp >= 1) {
+          jQuery('.pagination li:first-child').removeClass("disabled");
+        }
+        else {
+          jQuery('.pagination li:first-child').addClass("disabled");
+        }
+      });
+    }
+  
   #info-container.container-fluid
     .row.info-title
       .col-12 측정 자료 조회
@@ -190,3 +255,5 @@ block content
                 td 
                   img.wind-direction-icon(src="images/Black_Arrow.png", alt="wind-direction" style={ width: '40px', transform: `rotate(${map.windDirection}deg)`})
                 td #{map.windSpeed} (m/s)
+        br
+        ul(class='pagination')

@@ -11,19 +11,23 @@ block content
   script.
     document.getElementById("real").className="current";
 
+    //- 처음 페이지 표시시 실시간 데이터와 최근 10시간 데이터 표시
     $(document).ready(function() {
       updateData();
       updateChart();
       });
 
+    //- 실시간 데이터 조회는 2초 간격
     setInterval(function() {  
       updateData();
     }, 2000);
 
+    //- 최근 10시간 데이터 조회는 1시간 간격
     setInterval(function() {
       updateChart();
     }, 3600000);
     
+    //- 실시간 자료 조회 페이지에서 실시간 자료를 표시하기 위한 함수
     const updateData = () => {
       $.ajax({
         type: 'get', 
@@ -39,6 +43,7 @@ block content
       })
     }
 
+    //- 실시간 자료 조회 페이지에서 최근 10시간 데이터를 표시하기 위한 함수
     const updateChart = () => {
       $.ajax({
         type: 'get', 
@@ -48,6 +53,7 @@ block content
         success: (result) => {
           $.each(result, function(index, item) {
             for(let i=0; i<10; i++) {
+              //- 새로운 데이터를 위하여 myChart에 존재중인 데이터 제거
               myChart.data.labels.splice(-1,1);
               myChart.data.datasets.forEach((datasets) => {
                 datasets.data.pop();
@@ -55,6 +61,7 @@ block content
             }
 
             for(let i=0; i<10; i++) {
+              //- myChart에 받아온 데이터들을 삽입
               myChart.data.labels.push(item[i].rgstDt);
               myChart.data.datasets.forEach((datasets) => {
                 datasets.data.push(item[i].windSpeed);
@@ -84,8 +91,7 @@ block content
         canvas#myChart
 
       script.
-        const greenBg = 'rgba(43,255,0,0.4)';
-        const greenBd = 'rgba(43, 255, 0, 1)';
+        //- myChart 옵션 설정 부분
         const ctx = document.getElementById('myChart'); 
         const myChart = new Chart(ctx, { 
           type: 'bar', 
@@ -106,6 +112,10 @@ block content
             }
           }
         });
+        
+        //- myChart 표 색 설정 부분
+        const greenBg = 'rgba(43,255,0,0.4)';
+        const greenBd = 'rgba(43, 255, 0, 1)';
         
         for(let i=0; i<10; i++) {
           myChart.data.datasets.forEach((backgroundColor) => {

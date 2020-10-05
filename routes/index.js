@@ -9,7 +9,9 @@ router.get('/', function(req, res, next) {
   res.render('index');
 });
 
+// 실시간 자료 조회에서 실시간 자료 ajax를 조회하는 부분
 router.get('/api/updateData', (req, res, next) => {
+  // 데이터베이스에서 내림차순으로 첫번째 데이터 조회
   const query = `
     SELECT windDirection, windSpeed, rgst_dt AS rgstDt
     FROM finedust_tb ORDER BY logIdx DESC LIMIT 1`;
@@ -38,7 +40,9 @@ router.get('/api/updateData', (req, res, next) => {
   });
 })
 
+// 실시간 자료 조회에서 최근 10시간 데이터 ajax를 조회하는 부분
 router.get('/api/updateChart', (req, res, next) => {
+  // 시간을 그룹으로 묶어 시간당 평균 데이터를 10개 조회
   const query = `
     SELECT AVG(windDirection) AS windDirection, 
           ROUND(AVG(substr(windSpeed, 1, 3)), 2) AS windSpeed,

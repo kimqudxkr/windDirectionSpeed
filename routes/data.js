@@ -3,6 +3,7 @@ var router = express.Router();
 const moment = require('moment');   
 const connection = require('./connection');
 
+// 측정 자료 조회 페이지의 기간 설정 부분에서 선택한 설정에 따라 SQL 구문에서 조건을 주기 위한 함수
 const selectOption = (params) => {
   switch (params.termSetting) {
     case "user":
@@ -23,6 +24,7 @@ const selectOption = (params) => {
 
 /* GET databyday page. */
 router.get('/', (req, res, next) => {  
+  // 데이터베이스에 존재하는 모든 데이터 조회
   const query = `
     SELECT AVG(windDirection) AS windDirection, 
             ROUND(AVG(substr(windSpeed, 1, 3)), 2) AS windSpeed,
@@ -48,10 +50,12 @@ router.get('/', (req, res, next) => {
   })
 })
 
+// 조회 버튼을 눌렀을 때 ajax 처리하는 부분
 router.get('/api/search', (req, res, next) => {
   const params = req.query;
   const time = selectOption(params);
 
+  // 조회 버튼을 눌러 넘어온 파라미터들을 기반으로 조건 설정하여 조회
   const query = `
     SELECT AVG(windDirection) AS windDirection, 
             ROUND(AVG(substr(windSpeed, 1, 3)), 2) AS windSpeed, 
@@ -62,9 +66,9 @@ router.get('/api/search', (req, res, next) => {
 
   connection.query(query, (err, rows, fields) => {
     if (!err) {
-      let result;
-      const dateFormat = {'13': 'MM-DD:HH', '10': 'YYYY-MM-DD', '18': 'MM-DD HH:mm:ss'};
+      let result;   //SQL 결과를 html구문으로 반복하기 위한 함수
 
+      // 만약 데이터가 없다면 No Data로 표시
       if(JSON.stringify(rows)=='[]') {
         result = `
         <tr>
@@ -75,7 +79,7 @@ router.get('/api/search', (req, res, next) => {
         rows.forEach(data => {
           const html = `
             <tr>
-              <td>${moment(data.rgstDt).format(dateFormat['10'])}</td>
+              <td>${moment(data.rgstDt).format('YYYY-MM-DD')}</td>
               <td>
                 <img class="wind-direction-icon" src="images/Black_Arrow.png" alt="wind-direction" style="width: 40px; transform: rotate(${data.windDirection}deg);" />
               </td>

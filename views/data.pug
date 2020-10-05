@@ -6,6 +6,7 @@ block content
   script.
     document.getElementById("data").className="current";
 
+    //- 사용자 정의 설정에서 달력으로 날짜 선택하기 위한 datepicker 옵션들
     $( function() {
       $.datepicker.setDefaults({
         defaultDate: new Date(),
@@ -22,16 +23,18 @@ block content
       $("#endDay").datepicker().val(moment().format('YYYY-MM-DD'));
     });
     
+    //- 자료를 조회시 데이터가 많을 때 스크롤 내리기 힘드니 pagination 작동
     jQuery('document').ready(function() {
       pagination();
 
       jQuery('.pagination li:first-child').addClass("disabled");
     });
 
+    //- 기간 설정 옵션 중 주간에서 선택 월의 주가 최대 몇까지 있는지 구하기 위한 함수
     const getWeek = (dateFormat) => {
       const the = new Date(dateFormat);
       const newYear = new Date(the.getFullYear(),0,1);      
-      let day = newYear.getDay();                         
+      let day = newYear.getDay();
       day = (day >= 0 ? day : day + 7);
       const daynum = Math.floor((the.getTime() - newYear.getTime() -
         (the.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
@@ -50,7 +53,8 @@ block content
       }
       return weeknum;
     }
-
+    
+    //- 기간 설정에서 주간 선택 시 몇 주인지를 나타내는 select box 옵션 변경 함수
     const changeWeek = () => {
       const year = document.getElementById("yearTerm").value;
       const month = document.getElementById("monthTerm").value;
@@ -68,9 +72,11 @@ block content
       }
     }
 
+    //- 조회 버튼을 클릭시 작동하는 함수로 백엔드로 데이터를 넘기고 받는 함수
     const search = () => {
       const form =  document.getElementById("infoSearchForm");
       
+      //- 기간 설정 select box에서 선택한 값에 따라 백엔드에서 SQL문에서 조건으로 사용하기 위한 변수
       const termSelectBox = document.getElementById("term");
       const termSetting = termSelectBox.options[termSelectBox.selectedIndex].value;
 
@@ -87,12 +93,12 @@ block content
           'week': document.getElementById("weekTerm").value,
         }, 
         type: 'get', 
-        dataType : 'html', 
-        url: "/data/api/search", 
+        dataType : 'html',
+        url: "/data/api/search",
         contentType: 'application/json', 
         success: (result) => {
           $("#info-table > tbody").html(result);
-          jQuery('.pagination *').remove();
+          jQuery('.pagination *').remove();         //- 조회를 눌러 테이블이 새로고침 될 때 마다 pagination 새로고침
           pagination();
         },
         error: (err) => {
@@ -101,6 +107,7 @@ block content
       })
     }
 
+    //- 기간 설정 select box 선택할 때 마다 그에 해당하는 select box들을 보이고, 사라지게 하는 함수
     const selectDate = (e) => {
       if(e.value != 'user') {
         document.getElementById("startDay").disabled = true;
@@ -145,8 +152,9 @@ block content
         document.getElementById("weekTerm").style.display = "none";
     }
 
+    //- 테이블의 데이터를 한번에 10개씩 보여주는 pagination 함수
     const pagination = () => {
-      const rowNum = 10;
+      const rowNum = 10;      //- 한 페이지에 보여줄 데이터 갯수
       let $tr = jQuery('tbody tr');
       const totalRowNum = $tr.length;
       let pagesNum = 0;
@@ -160,6 +168,7 @@ block content
         pagesNum = Math.floor(pagesNum++);
       }
 
+      //- 나눈 갯수만큼 페이지 버튼 생성
       for(let i=1; i<=pagesNum; i++) {
         jQuery('.pagination').append(`<li><button class="btn-dark">${i}</button></li>`);
         jQuery('.pagination li:nth-child(1)').addClass("active");
@@ -174,8 +183,10 @@ block content
         }
       });
 
+      //- 첫 페이지 선택을 표시하기 위해 버튼의 클래스 제거 -> 흰색 버튼 됨
       jQuery('.pagination li:nth-child(1)').children(":first").removeClass("btn-dark");
 
+      //- pagination의 페이지 버튼을 클릭할 때 작동하는 함수
       jQuery('.pagination button').click('.pagination-link', function(e) {
         e.preventDefault();
         $tr.hide();
@@ -184,6 +195,7 @@ block content
         let start = tmp * rowNum;
         let currentLink = tmp;
 
+        //- 해당 페이지 확인 중을 표시하기 위해 선택된 버튼의 클래스를 제거하여 흰색으로 표시
         jQuery('.pagination button').addClass("btn-dark");
         jQuery(this).removeClass("btn-dark");
         jQuery('.pagination li').removeClass("active");

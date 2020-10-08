@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  link(rel='stylesheet', href='/stylesheets/real.css')
+  link(rel='stylesheet', href='/stylesheets/index.css')
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <script src="https://code.highcharts.com/modules/exporting.js"></script>
   <script src="https://code.highcharts.com/modules/export-data.js"></script>
@@ -96,16 +96,15 @@ block content
 
   .row(style='margin: 0 auto')
     .col-5(style='margin: 0 auto')
-      h1(style='text-align:center') 실시간 자료 조회
-      br
+      h1 실시간 자료 조회
       table#nowTable
         thead
           tr
             th(colspan='2', style='background-color:#dadada') 실시간 데이터
         tbody
       br
-      p(align='center') 새로고침 주기 : 
-        select#updateTerm(onChange="setUpdateTerm()")
+      p 새로고침 주기 : 
+        select#updateTerm(style='width:60px; height:30px',onChange="setUpdateTerm()")
           option(value=1) 1초
           option(value=3, selected) 3초
           option(value=5) 5초
@@ -129,7 +128,12 @@ block content
                          borderWidth: 1
                       }]
           }, 
-          options: { 
+          options: {
+            legend: {
+              labels: {
+                fontFamily: "Do Hyeon"
+              }
+            },
             scales: { 
               yAxes: [{ 
                 ticks: { beginAtZero: true }

@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  link(rel='stylesheet', href='/stylesheets/info.css')
+  link(rel='stylesheet', href='/stylesheets/data.css')
 
   script.
     document.getElementById("data").className="current";
@@ -222,36 +222,36 @@ block content
         .row
           .col-3 ■ 기간 설정
           .col-2
-            select#term(type="text", style="width:150px", onchange="selectDate(this)")
+            select#term(type="text", style="width:150px; height:30px;", onchange="selectDate(this)")
               option(value="user") 사용자 정의
               option(value="year") 연간
               option(value="quater") 분기간
               option(value="month") 월간
               option(value="week") 주간
           .col-6
-            select#yearTerm(type='text', style='display:none; margin:5px', onchange="changeWeek()")
+            select#yearTerm(type='text', style='display:none; margin:5px; height:30px;', onchange="changeWeek()")
               -for(let i=2020; i>2005;i--)
                 option(value=i)=(i)+'년'
-            select#quaterTerm(type='text', style='display:none; margin:5px')
+            select#quaterTerm(type='text', style='display:none; margin:5px; height:30px;')
               -for(let i=1; i<5;i++)
                 option(value=i)=(i)+'사분기'
-            select#monthTerm(type='text', style='display:none; margin:5px', onchange="changeWeek()")
+            select#monthTerm(type='text', style='display:none; margin:5px; height:30px;', onchange="changeWeek()")
               -for(let i=1; i<13;i++)
                 option(value=i)=(i)+'월'
-            select#weekTerm(type='text', style='display:none; margin:5px')
+            select#weekTerm(type='text', style='display:none; margin:5px; height:30px;')
               -for(let i=1; i<7;i++)
                 option(value=i)=(i)+'주차'
             button.btn.btn-dark(onClick='search()') 조회
         .row
           .col-3 ■ 사용자 정의 설정    
           .col-4 시작 날짜 : 
-            input#startDay(type="input", style="margin:8px; width:100px")
-            select#startHour(style="width:60px; margin:8px")
+            input#startDay(type="input", style="margin:8px; width:100px; text-align:center;")
+            select#startHour(style="width:60px; height:30px; margin:8px")
                 -for (let i = 0; i < 24; i++)
                   option(value=i < 10 ? '0' + i : i)= (i < 10 ? '0' + i : i)+'시'
           .col-4 종료 날짜 : 
-            input#endDay(type="input", style="margin:8px; width:100px")  
-            select#endHour(style="width:60px; margin:8px")
+            input#endDay(type="input", style="margin:8px; width:100px; text-align:center;")  
+            select#endHour(style="width:60px; height:30px; margin:8px")
                 -for (let i = 0; i < 24; i++)
                   option(value=i < 10 ? '0' + i : i)= (i < 10 ? '0' + i : i)+'시'
     .row.info-table

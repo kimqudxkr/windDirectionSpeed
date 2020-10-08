@@ -6,6 +6,8 @@ body {
 .navbar {
   margin:0;
   padding:0;
+  font-family: 'Do Hyeon', sans-serif;
+  font-size: 20px;
 }
 
 .navbar .navbar-nav .nav-item a {

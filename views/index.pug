@@ -17,10 +17,10 @@ block content
       updateChart();
       });
 
-    //- 실시간 데이터 조회는 2초 간격
-    setInterval(function() {  
+    //- 초기 실시간 데이터 조회는 3초 간격
+    const defaultInterval = setInterval(function() {  
       updateData();
-    }, 2000);
+    }, 3000);
 
     //- 최근 10시간 데이터 조회는 1시간 간격
     setInterval(function() {
@@ -76,8 +76,26 @@ block content
       })
     }
 
-  .row
-    .col-5
+    //- 실시간 자료 조회 새로고침 주기를 설정하는 함수
+    let flag = false;
+    let refresh;
+    const setUpdateTerm = () => {
+      clearInterval(defaultInterval); 
+      if(flag) 
+        clearInterval(refresh);
+
+      const selectOption = document.getElementById("updateTerm");
+      const timeout = selectOption.options[selectOption.selectedIndex].value*1000;
+      flag = true;
+      
+      refresh = setInterval(function() {
+        updateData();
+      }, timeout);
+
+    }
+
+  .row(style='margin: 0 auto')
+    .col-5(style='margin: 0 auto')
       h1(style='text-align:center') 실시간 자료 조회
       br
       table#nowTable
@@ -85,7 +103,14 @@ block content
           tr
             th(colspan='2', style='background-color:#dadada') 실시간 데이터
         tbody
-    .col-6
+      br
+      p(align='center') 새로고침 주기 : 
+        select#updateTerm(onChange="setUpdateTerm()")
+          option(value=1) 1초
+          option(value=3, selected) 3초
+          option(value=5) 5초
+
+    .col-6(style='margin: 0 auto')
       h1(style='text-align:center') 최근 10시간 데이터
       .container
         canvas#myChart

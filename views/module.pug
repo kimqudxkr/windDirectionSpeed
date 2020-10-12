@@ -6,6 +6,26 @@ block content
   script.
     document.getElementById("module").className="current";
 
+    const deleteModule = (deviceId) => {
+      $.ajax({
+        data: {
+          'deviceId': deviceId
+        },
+        type: 'get',
+        dataType : 'html',
+        url: "/module/api/delete", 
+        contentType: 'application/json', 
+        success: (success) => {
+          alert('삭제완료');
+          location.reload();
+        },
+        error: (err) => {
+          alert('삭제실패');
+          console.log(err)
+        }
+      })
+    }
+
   p#title 장치 목록 
 
   table#listTable(border='1')
@@ -15,15 +35,14 @@ block content
       th 등록 일자
       th 수정
       th 삭제
-    tbody
-      each list in moduleList
-        tbody
-          td #{list.deviceId}
-          td #{list.location}
-          td #{list.rgstDt}
-          td
-            button.btn.btn-dark(onClick='') 수정
-          td
-            button.btn.btn-dark(onClick='') 삭제
+    each list in moduleList
+      tbody
+        td #{list.deviceId}
+        td #{list.location}
+        td #{list.rgstDt}
+        td
+          button.btn.btn-dark(onClick='') 수정
+        td
+          button.btn.btn-dark(onClick=`deleteModule('${list.deviceId}')`) 삭제
   br
   button.btn.btn-dark(onclick="location.href='/registModule'") 새 장치 등록

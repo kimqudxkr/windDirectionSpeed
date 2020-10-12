@@ -23,4 +23,17 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/api/delete', function(req, res, next) {
+  const deviceId = req.query.deviceId;
+  const query = `DELETE FROM modulelist WHERE deviceId = '${deviceId}'`;
+
+  connection.query(query,(err, rows, fields) => {
+    if(!err) {
+      res.send("Success");
+    } else {
+      res.send(err);
+    }
+  });
+});
+
 module.exports = router;

@@ -23,7 +23,7 @@ block content
       $("#endDay").datepicker().val(moment().format('YYYY-MM-DD'));
     });
     
-    //- 자료를 조회시 데이터가 많을 때 스크롤 내리기 힘드니 pagination 작동
+    //- 화면 구성 후 pagination 함수 호출
     jQuery('document').ready(function() {
       pagination();
 
@@ -159,6 +159,7 @@ block content
       const totalRowNum = $tr.length;
       let pagesNum = 0;
 
+      //- 총 만들 페이지 갯수 계산
       if(totalRowNum % rowNum == 0) {
         pagesNum = totalRowNum / rowNum;
       }
@@ -171,7 +172,6 @@ block content
       //- 나눈 갯수만큼 페이지 버튼 생성
       for(let i=1; i<=pagesNum; i++) {
         jQuery('.pagination').append(`<li><button class="btn-dark">${i}</button></li>`);
-        jQuery('.pagination li:nth-child(1)').addClass("active");
         jQuery('.pagination button').addClass("pagination-link");
       }
 
@@ -198,18 +198,9 @@ block content
         //- 해당 페이지 확인 중을 표시하기 위해 선택된 버튼의 클래스를 제거하여 흰색으로 표시
         jQuery('.pagination button').addClass("btn-dark");
         jQuery(this).removeClass("btn-dark");
-        jQuery('.pagination li').removeClass("active");
-        jQuery(this).parent().addClass("active");
 
         for(let i=0; i<rowNum; i++) {
           $tr.eq(start+i).show();
-        }
-
-        if(tmp >= 1) {
-          jQuery('.pagination li:first-child').removeClass("disabled");
-        }
-        else {
-          jQuery('.pagination li:first-child').addClass("disabled");
         }
       });
     }
@@ -229,29 +220,29 @@ block content
               option(value="month") 월간
               option(value="week") 주간
           .col-6(style='padding-left: 5px;')
-            select#yearTerm(type='text', style='display:none; margin:5px; height:30px;', onchange="changeWeek()")
+            select#yearTerm(type='text', onchange="changeWeek()")
               -for(let i=2020; i>2005;i--)
                 option(value=i)=(i)+'년'
-            select#quaterTerm(type='text', style='display:none; margin:5px; height:30px;')
+            select#quaterTerm(type='text')
               -for(let i=1; i<5;i++)
                 option(value=i)=(i)+'사분기'
-            select#monthTerm(type='text', style='display:none; margin:5px; height:30px;', onchange="changeWeek()")
+            select#monthTerm(type='text', onchange="changeWeek()")
               -for(let i=1; i<13;i++)
                 option(value=i)=(i)+'월'
-            select#weekTerm(type='text', style='display:none; margin:5px; height:30px;')
+            select#weekTerm(type='text')
               -for(let i=1; i<7;i++)
                 option(value=i)=(i)+'주차'
             button.btn.btn-dark(onClick='search()') 조회
         .row
           .col-3 ■ 사용자 정의 설정    
           .col-4 시작 날짜 : 
-            input#startDay(type="input", style="margin:8px; width:100px; text-align:center;")
-            select#startHour(style="width:60px; height:30px; margin:8px")
+            input#startDay(type="input")
+            select#startHour
                 -for (let i = 0; i < 24; i++)
                   option(value=i < 10 ? '0' + i : i)= (i < 10 ? '0' + i : i)+'시'
           .col-4 종료 날짜 : 
-            input#endDay(type="input", style="margin:8px; width:100px; text-align:center;")  
-            select#endHour(style="width:60px; height:30px; margin:8px")
+            input#endDay(type="input")  
+            select#endHour
                 -for (let i = 0; i < 24; i++)
                   option(value=i < 10 ? '0' + i : i)= (i < 10 ? '0' + i : i)+'시'
     .row.info-table
@@ -260,9 +251,9 @@ block content
         table#info-table
           thead
             tr
-              th 날짜<br/>(연-월-일)
-              th 풍향
-              th 평균 풍속(m/s)
+              td 날짜<br/>(연-월-일)
+              td 풍향
+              td 평균 풍속(m/s)
           tbody
             each map in datas
               tr

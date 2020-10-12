@@ -4,4 +4,24 @@ block content
   script.
     document.getElementById("module").className="current";
 
-  p this is module page
+  p 장치 목록 
+
+  table(border='1')
+    thead
+      th 장치 이름
+      th 장치 위치
+      th 등록 일자
+      th 수정
+      th 삭제
+    tbody
+      each list in moduleList
+        tbody
+          td #{list.deviceId}
+          td #{list.location}
+          td #{list.rgstDt}
+          td
+            button.btn.btn-dark(onClick='') 수정
+          td
+            button.btn.btn-dark(onClick='') 삭제
+  br
+  button.btn.btn-dark(onClick='') 새 장치 등록

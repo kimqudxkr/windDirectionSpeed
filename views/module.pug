@@ -7,23 +7,25 @@ block content
     document.getElementById("module").className="current";
 
     const deleteModule = (deviceId) => {
-      $.ajax({
-        data: {
-          'deviceId': deviceId
-        },
-        type: 'get',
-        dataType : 'html',
-        url: "/module/api/delete", 
-        contentType: 'application/json', 
-        success: (success) => {
-          alert('삭제완료');
-          location.reload();
-        },
-        error: (err) => {
-          alert('삭제실패');
-          console.log(err)
-        }
-      })
+      if(confirm("삭제하시겠습니까?")) {
+        $.ajax({
+          data: {
+            'deviceId': deviceId
+          },
+          type: 'get',
+          dataType : 'html',
+          url: "/module/api/delete", 
+          contentType: 'application/json', 
+          success: (success) => {
+            alert('삭제완료');
+            location.reload();
+          },
+          error: (err) => {
+            alert('삭제실패');
+            console.log(err)
+          }
+        })
+      }
     }
 
   p#title 장치 목록 

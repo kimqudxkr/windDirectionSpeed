@@ -1,3 +1,17 @@
+body {
+  background-color: #D9D7D7;
+}
+
+#info-table thead {
+  font-family: 'Do Hyeon', sans-serif;
+  color: white;
+  font-size: 20px;
+}
+
+#info-table tbody{
+  background-color: #c7c7c7;
+}
+
 #info-container {
   font-family: 'Do Hyeon', sans-serif;
 }
@@ -89,8 +103,8 @@
   margin-right: auto;
 }
 
-#info-container #info-table th {
-  background-color: #f3f3f3;
+#info-container #info-table thead td {
+  background-color:#525252;
 }
 
 #info-container #info-table td {
@@ -208,4 +222,23 @@
     height: 25px;
     font-size: 10px;
   }
+
+}
+
+#info-container .info-search .col-6 select {
+  margin:5px;
+  height:30px;
+  display: none;
+}
+
+#info-container .info-search .col-4 input {
+  margin:8px; 
+  width:100px; 
+  text-align:center;
+}
+
+#info-container .info-search .col-4 select {
+  width:60px; 
+  height:30px; 
+  margin:8px;
 }

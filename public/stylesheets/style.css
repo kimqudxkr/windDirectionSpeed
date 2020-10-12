@@ -16,9 +16,9 @@ body {
 }
 
 .navbar .navbar-nav .nav-item a.current {
-  color: rgb(43, 255, 0);
+  color : #2ac308;
 }
 
 .navbar .navbar-nav .nav-item a:hover:not(.current) {
-  color: rgb(123, 158, 125);
+  color: #aed699a1;
 }

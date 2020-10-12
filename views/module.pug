@@ -1,12 +1,14 @@
 extends layout
 
 block content
+  link(rel='stylesheet', href='/stylesheets/module.css')
+
   script.
     document.getElementById("module").className="current";
 
-  p 장치 목록 
+  p#title 장치 목록 
 
-  table(border='1')
+  table#listTable(border='1')
     thead
       th 장치 이름
       th 장치 위치

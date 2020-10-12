@@ -1,0 +1,19 @@
+body {
+    background-color: #fff;
+    text-align: center;
+}
+
+#title {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 50px;
+}
+
+#listTable {
+    margin: auto;
+    font-family: 'Do Hyeon', sans-serif;
+    width: 500px;
+}
+
+#listTable thead {
+    font-size: 25px;
+}

@@ -1,0 +1,52 @@
+extends layout
+
+block content
+  link(rel='stylesheet', href='/stylesheets/module.css')
+
+  script.
+    document.getElementById("module").className="current";
+
+  p#title 장치 등록
+
+  table#registTable(border='1')
+    tr
+      th 장치 이름
+      td
+        input(type='text' class='form-control' id='deviceId')
+    tr
+      th 장치 위치
+      td
+        input(type='text' class='form-control' id='location')
+    tr
+      th 등록 일자
+      td 
+        input(type='text' class='form-control' id='dateInput' disabled)
+  script.
+    document.getElementById('dateInput').value = moment().format('YYYY-MM-DD');
+
+  br
+  div
+    button.btn.btn-dark(onclick="registerModule()" style='margin-right: 5px;') 등록
+    button.btn.btn-dark(onclick="location.href='/module'" style='margin-left: 5px;') 취소
+
+  script.
+    const registerModule = () => {
+      $.ajax({
+        data: {
+          'deviceId': document.getElementById("deviceId").value,
+          'location': document.getElementById("location").value
+        },
+        type: 'get',
+        dataType : 'html',
+        url: "/registModule/api/regist", 
+        contentType: 'application/json', 
+        success: (success) => {
+          alert('등록완료');
+          location.href='/module';
+        },
+        error: (err) => {
+          alert('등록실패');
+          console.log(err)
+        }
+      })
+    }

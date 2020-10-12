@@ -17,3 +17,9 @@ body {
 #listTable thead {
     font-size: 25px;
 }
+
+#registTable {
+    margin: auto;
+    font-family: 'Do Hyeon', sans-serif;
+    width: 300px;
+}

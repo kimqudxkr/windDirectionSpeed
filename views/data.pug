@@ -80,6 +80,10 @@ block content
       const termSelectBox = document.getElementById("term");
       const termSetting = termSelectBox.options[termSelectBox.selectedIndex].value;
 
+      //- 장치 설정 select box에서 선택된 값에 따라 백엔드에서 SQL문에서 조건으로 사용하기 위한 변수
+      const deviceSelectBox = document.getElementById("deviceType");
+      const deviceSetting = deviceSelectBox.options[deviceSelectBox.selectedIndex].value;
+
       $.ajax({
         data: {
           'termSetting': termSetting,
@@ -91,6 +95,7 @@ block content
           'quater': document.getElementById("quaterTerm").value,
           'month': document.getElementById("monthTerm").value,
           'week': document.getElementById("weekTerm").value,
+          'deviceSetting': deviceSetting,
         }, 
         type: 'get', 
         dataType : 'html',
@@ -246,7 +251,7 @@ block content
                 -for (let i = 0; i < 24; i++)
                   option(value=i < 10 ? '0' + i : i)= (i < 10 ? '0' + i : i)+'시'
         .row
-          .col-3 ■ 장치 유형 설정
+          .col-3 ■ 장치 설정
           .col-4
             select#deviceType(style="width: 100px; margin-left: 0px;")
               option(value="all") 모든 장치
@@ -255,13 +260,14 @@ block content
 
     .row.info-table
       .col-12
-        div(style='margin-left:390px') 측정자료(수치) 
+        div(style='margin-left:300px') 측정자료(수치) - 아래의 데이터는 하루를 기준으로 평균을 낸 데이터 입니다
         table#info-table
           thead
             tr
               td 날짜<br/>(연-월-일)
               td 풍향
               td 평균 풍속(m/s)
+              td 장치 이름
           tbody
             each map in datas
               tr
@@ -269,5 +275,6 @@ block content
                 td 
                   img.wind-direction-icon(src="images/Black_Arrow.png", alt="wind-direction" style={ width: '40px', transform: `rotate(${map.windDirection}deg)`})
                 td #{map.windSpeed} (m/s)
+                td 모든 장치
         br
         ul(class='pagination')

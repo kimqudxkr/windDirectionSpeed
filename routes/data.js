@@ -30,7 +30,6 @@ router.get('/', (req, res, next) => {
   connection.query(moduleQuery,(err, rows, fields) => {
     if(!err) {
       moduleQueryRes = rows;
-      console.log(moduleQueryRes);
     } else {
       res.send(err);
     }
@@ -52,6 +51,7 @@ router.get('/', (req, res, next) => {
                                             return {
                                               windDirection: data.windDirection,
                                               windSpeed: data.windSpeed,
+                                              deviceId: data.deviceId,
                                               rgstDt: moment(data.rgstDt).format('YYYY-MM-DD')
                                             }
                                           })
@@ -68,12 +68,22 @@ router.get('/api/search', (req, res, next) => {
   const params = req.query;
   const time = selectOption(params);
 
+  // 장치 설정으로 넘어온 파라미터에 따라 deviceId 분류
+  let device;
+
+  if(params.deviceSetting == "all") {
+    device = "";
+  } else {
+    device = ` AND deviceId = '${params.deviceSetting}' `
+  }
+
   // 조회 버튼을 눌러 넘어온 파라미터들을 기반으로 조건 설정하여 조회
   const query = `
     SELECT AVG(windDirection) AS windDirection, 
             ROUND(AVG(substr(windSpeed, 1, 3)), 2) AS windSpeed, 
-            rgst_dt AS rgstDt
-    FROM finedust_tb WHERE ${time} 
+            rgst_dt AS rgstDt,
+            deviceId
+    FROM finedust_tb WHERE ${time} ${device}
     GROUP BY SUBSTR(rgst_dt, 1, 10) 
     ORDER BY rgst_dt DESC`;
 
@@ -85,7 +95,7 @@ router.get('/api/search', (req, res, next) => {
       if(JSON.stringify(rows)=='[]') {
         result = `
         <tr>
-          <td colspan="3">No Data</td>
+          <td colspan="4">No Data</td>
         </tr>`
       } 
       else {      
@@ -97,6 +107,7 @@ router.get('/api/search', (req, res, next) => {
                 <img class="wind-direction-icon" src="images/Black_Arrow.png" alt="wind-direction" style="width: 40px; transform: rotate(${data.windDirection}deg);" />
               </td>
               <td>${data.windSpeed} (m/s)</td>
+              <td>${params.deviceSetting == "all" ? "모든 장치" : data.deviceId} </td>
             </tr>
           `
           result += html;

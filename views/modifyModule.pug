@@ -1,0 +1,90 @@
+extends layout
+
+block content
+  link(rel='stylesheet', href='/stylesheets/module.css')
+
+  script.
+    document.getElementById("module").className="current";
+
+    //- 수정 페이지에서 장치 이름에 따른 장치 유형을 받아오기 위한 작업
+    //- html의 select를 받아와 변경시키기 때문에 페이지가 다 로딩된 후 작업해야 함
+    $(document).ready(function() {
+      $.ajax({
+        data: {
+          'deviceId': document.getElementById("deviceId").value,
+        },
+        type: 'get',
+        dataType : 'html',
+        url: "/modifyModule/api/findType", 
+        contentType: 'application/json', 
+        success: (success) => {
+          const type = success;
+          const selectType = document.getElementById("deviceType");
+          const len = selectType.options.length;
+
+          //- select의 option들 중 값이 일치하는 것을 선택되도록 설정
+          for(let i=0; i<len; i++) {
+            if(selectType.options[i].value == type) {
+              selectType.options[i].selected = "selected";
+            }
+          }
+        },
+        error: (err) => {
+          console.log(err)
+        }
+      })
+    })
+
+    //- 수정을 하기 위하여 ajax를 사용하는 함수
+    const modifyModule = () => {
+      const deviceTypeOption = document.getElementById("deviceType");
+      const deviceType = deviceTypeOption.options[deviceTypeOption.selectedIndex].value;
+
+      $.ajax({
+        data: {
+          'deviceId': document.getElementById("deviceId").value,
+          'deviceType': deviceType,
+          'location': document.getElementById("location").value
+        },
+        type: 'get',
+        dataType : 'html',
+        url: "/modifyModule/api/modify", 
+        contentType: 'application/json', 
+        success: (success) => {
+          alert('수정완료');
+          location.href='/module';
+        },
+        error: (err) => {
+          alert('수정실패');
+          console.log(err)
+        }
+      })
+    }
+
+  p#title 장치 정보 수정
+
+  table#registTable(border='1')
+    tr
+      th 장치 이름
+      td
+        input(type='text' class='form-control' id='deviceId' disabled value=moduleInfo[0].deviceId)
+    tr
+      th 장치 유형
+      td
+        select(id='deviceType' class='form-control')
+          option(value='풍향/풍속') 풍향/풍속
+          option(value='온도/습도') 온도/습도
+          option(value='미세먼지') 미세먼지
+    tr
+      th 장치 위치
+      td
+        input(type='text' class='form-control' id='location' value=moduleInfo[0].location)
+    tr
+      th 등록 일자
+      td 
+        input(type='text' class='form-control' id='dateInput' disabled value=moduleInfo[0].rgstDt)
+
+  br
+  div
+    button.btn.btn-dark(onclick="modifyModule()" style='margin-right: 5px;') 수정
+    button.btn.btn-dark(onclick="location.href='/module'" style='margin-left: 5px;') 취소

@@ -29,7 +29,7 @@ block content
       }
     }
 
-  p#title 장치 목록 
+  p#title(style="margin-top:5%;") 장치 목록 
 
   table#listTable(border='1')
     thead
@@ -46,9 +46,9 @@ block content
         td #{list.location}
         td #{list.rgstDt}
         td
-          button.btn.btn-dark(onClick=`location.href='/modifyModule?deviceId=${list.deviceId}'`) 수정
+          button.btn.btn-dark(class='form-control' onClick=`location.href='/modifyModule?deviceId=${list.deviceId}'`) 수정
         td
-          button.btn.btn-dark(onClick=`deleteModule('${list.deviceId}')`) 삭제
+          button.btn.btn-dark(class='form-control' onClick=`deleteModule('${list.deviceId}')`) 삭제
   br
   div
     button.btn.btn-dark(onclick="location.href='/registModule'" style='margin-left: 5px') 새 장치 등록

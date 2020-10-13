@@ -102,7 +102,7 @@ block content
       table#nowTable
         thead
           tr
-            th(colspan='2', style='background-color:#dadada') 실시간 데이터
+            th(colspan='2') 실시간 데이터
         tbody
       br
       p 새로고침 주기 : 
@@ -114,7 +114,7 @@ block content
     .col-6(style='margin: 0 auto')
       h1 최근 10시간 데이터
       .container
-        canvas#myChart
+        canvas#myChart(style="background-color: #f3f3f3;")
 
       script.
         //- myChart 옵션 설정 부분

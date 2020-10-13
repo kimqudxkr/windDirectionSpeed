@@ -1,5 +1,5 @@
 body {
-    background-color: #fff;
+    background-color: #D9D7D7;
     text-align: center;
 }
 
@@ -11,17 +11,32 @@ body {
 #listTable {
     margin: auto;
     font-family: 'Do Hyeon', sans-serif;
-    width: 500px;
+    width: 550px;
 }
 
 #listTable thead {
-    font-size: 25px;
+    font-size: 20px;
+    color: white;
+    background-color:#525252;
+}
+
+#listTable thead tr {
+    height: 45px;
+}
+
+#listTable tbody {
+    background-color: #f3f3f3;
 }
 
 #registTable {
     margin: auto;
     font-family: 'Do Hyeon', sans-serif;
     width: 300px;
+    background-color: #f3f3f3;
+}
+
+#registTable th {
+    background-color: #d6d6d6;
 }
 
 #notice {

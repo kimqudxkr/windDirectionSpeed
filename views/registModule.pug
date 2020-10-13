@@ -39,6 +39,7 @@ block content
       $("#deviceId").blur(function() {      //- deviceId input에서 포커스가 해제되는 순간
         if($("#deviceId").val() == "") {
           $("#notice").text("장치 이름을 입력해주세요.");
+          $("#notice").removeAttr('style');
         } else {        //- 어떤 값이 입력이 된다면
           $.ajax({
             data: {
@@ -79,7 +80,7 @@ block content
       });
     })
     
-  p#title 장치 등록
+  p#title(style="margin-top:5%;") 장치 등록
 
   table#registTable(border='1')
     tr

@@ -1,3 +1,7 @@
+body {
+    background-color: #D9D7D7;
+}
+
 h1 {
     text-align: center;
     font-family: 'Black Han Sans', sans-serif;
@@ -12,6 +16,11 @@ h1 {
     width: 400px;
 }
 
+#nowTable thead  tr th {
+    background-color:#525252;
+    color: white;
+}
+
 #nowTable tr {
     font-size: 25px;
     border: 1px solid #000;
@@ -22,13 +31,15 @@ h1 {
 #nowTable th {
     font-size: 25px;
     border: 1px solid #000;
-    background-color: #f3f3f3;
+    background-color: #d6d6d6;
     padding: 5px;
 }
 
 #nowTable td {
     font-size: 25px;
     padding: 5px;
+    background-color: #f3f3f3;
+
 }
 
 .row .col-5 p {

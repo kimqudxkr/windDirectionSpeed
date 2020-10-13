@@ -7,9 +7,13 @@ block content
     document.getElementById("module").className="current";
 
     const registerModule = () => {
+      const deviceTypeOption = document.getElementById("deviceType");
+      const deviceType = deviceTypeOption.options[deviceTypeOption.selectedIndex].value;
+
       $.ajax({
         data: {
           'deviceId': document.getElementById("deviceId").value,
+          'deviceType': deviceType,
           'location': document.getElementById("location").value
         },
         type: 'get',
@@ -34,6 +38,13 @@ block content
       th 장치 이름
       td
         input(type='text' class='form-control' id='deviceId')
+    tr
+      th 장치 유형
+      td
+        select(id='deviceType' class='form-control')
+          option(value='풍향/풍속') 풍향/풍속
+          option(value='온도/습도') 온도/습도
+          option(value='미세먼지') 미세먼지
     tr
       th 장치 위치
       td

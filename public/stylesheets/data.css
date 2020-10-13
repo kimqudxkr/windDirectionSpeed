@@ -16,10 +16,6 @@ body {
   font-family: 'Do Hyeon', sans-serif;
 }
 
-#info-container .btn {
-  border-radius: 0px;
-}
-
 #info-container div.info-title {
   text-align: center;
   font-family: 'Black Han Sans', sans-serif;

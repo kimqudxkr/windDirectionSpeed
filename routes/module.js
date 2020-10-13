@@ -5,13 +5,14 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  const query = 'SELECT * FROM moduleList';
+  const query = 'SELECT * FROM moduleList ORDER BY rgstDt';
   
   connection.query(query,(err, rows, fields) => {
     if(!err) {
       res.render('module',{'moduleList':rows.map(result => {
                                                   return {
                                                     deviceId: result.deviceId,
+                                                    deviceType: result.deviceType,
                                                     location: result.location,
                                                     rgstDt: moment(result.rgstDt).format('YYYY-MM-DD')
                                                   }

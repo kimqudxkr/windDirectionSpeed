@@ -33,6 +33,7 @@ block content
   table#listTable(border='1')
     thead
       th 장치 이름
+      th 장치 유형
       th 장치 위치
       th 등록 일자
       th 수정
@@ -40,11 +41,13 @@ block content
     each list in moduleList
       tbody
         td #{list.deviceId}
+        td #{list.deviceType}
         td #{list.location}
         td #{list.rgstDt}
         td
-          button.btn.btn-dark(onClick='') 수정
+          button.btn.btn-dark(onClick=`location.href='/modifyModule?deviceId=${list.deviceId}'`) 수정
         td
           button.btn.btn-dark(onClick=`deleteModule('${list.deviceId}')`) 삭제
   br
-  button.btn.btn-dark(onclick="location.href='/registModule'") 새 장치 등록
+  div
+    button.btn.btn-dark(onclick="location.href='/registModule'" style='margin-left: 5px') 새 장치 등록

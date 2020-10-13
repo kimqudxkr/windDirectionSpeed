@@ -9,7 +9,8 @@ router.get('/', function(req, res, next) {
 
 router.get('/api/regist', function(req, res, next) {
   const params = req.query;
-  const query = `INSERT INTO modulelist(deviceId, location) VALUES('${params.deviceId}','${params.location}')`;
+  const query = `INSERT INTO modulelist(deviceId, deviceType, location) 
+                 VALUES('${params.deviceId}', '${params.deviceType}', '${params.location}')`;
 
   connection.query(query,(err, rows, fields) => {
     if(!err) {

@@ -13,7 +13,7 @@ router.get('/', function(req, res, next) {
 router.get('/api/updateData', (req, res, next) => {
   // 데이터베이스에서 내림차순으로 첫번째 데이터 조회
   const query = `
-    SELECT windDirection, windSpeed, rgst_dt AS rgstDt
+    SELECT windDirection, windSpeed, rgst_dt AS rgstDt, deviceId
     FROM finedust_tb ORDER BY logIdx DESC LIMIT 1`;
 
   connection.query(query, (err, rows) => {
@@ -30,6 +30,10 @@ router.get('/api/updateData', (req, res, next) => {
         <tr>
           <th>풍속</th>
           <td>${rows[0].windSpeed}</td>
+        </tr>
+        <tr>
+          <th>장치</th>
+          <td>${rows[0].deviceId}</td>
         </tr>
       `;
       res.send(html);

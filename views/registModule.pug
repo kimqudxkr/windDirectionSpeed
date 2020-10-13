@@ -6,7 +6,9 @@ block content
   script.
     document.getElementById("module").className="current";
 
+    //- 등록 버튼을 눌러 백엔드로 장치 등록 정보를 넘기는 함수
     const registerModule = () => {
+      //- 장치 유형 정보를 받아옴
       const deviceTypeOption = document.getElementById("deviceType");
       const deviceType = deviceTypeOption.options[deviceTypeOption.selectedIndex].value;
 
@@ -30,14 +32,26 @@ block content
         }
       })
     }
-
+    
+    //- 실시간 상호작용을 위한 구간
+    $(document).ready(function() {
+      //- 장치 위치를 입력하면 장치 이름과 장치 위치가 빈칸인지 확인 후 아니면 등록 버튼 활성화
+      $("#location").keyup(function() {
+        if(($("#deviceId").val()!="") && ($("#location").val()!="")) {
+          $("#registerButton").attr('disabled', false);
+        } else {
+          $("#registerButton").attr('disabled', true);
+        }
+      })
+    })
+    
   p#title 장치 등록
 
   table#registTable(border='1')
     tr
       th 장치 이름
       td
-        input(type='text' class='form-control' id='deviceId')
+        input(type='text' class='form-control' id='deviceId' placeholder="Device Name")
     tr
       th 장치 유형
       td
@@ -48,7 +62,7 @@ block content
     tr
       th 장치 위치
       td
-        input(type='text' class='form-control' id='location')
+        input(type='text' class='form-control' id='location' placeholder="Device Location")
     tr
       th 등록 일자
       td 
@@ -58,5 +72,5 @@ block content
 
   br
   div
-    button.btn.btn-dark(onclick="registerModule()" style='margin-right: 5px;') 등록
+    button.btn.btn-dark(onclick="registerModule()" style='margin-right: 5px;' disabled id="registerButton") 등록
     button.btn.btn-dark(onclick="location.href='/module'" style='margin-left: 5px;') 취소

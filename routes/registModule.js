@@ -21,4 +21,21 @@ router.get('/api/regist', function(req, res, next) {
   });
 });
 
+router.get('/api/checkId', function(req, res, next) {
+  const params = req.query;
+  const query = `SELECT * from moduleList WHERE deviceId='${params.deviceId}'`;
+
+  connection.query(query,(err, rows, fields) => {
+    if(!err) {
+      if(JSON.stringify(rows)=='[]') {
+        res.send("no");
+      } else {
+        res.send("yes");
+      }
+    } else {
+      res.send(err);
+    }
+  });
+});
+
 module.exports = router;

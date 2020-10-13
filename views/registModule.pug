@@ -35,14 +35,48 @@ block content
     
     //- 실시간 상호작용을 위한 구간
     $(document).ready(function() {
-      //- 장치 위치를 입력하면 장치 이름과 장치 위치가 빈칸인지 확인 후 아니면 등록 버튼 활성화
+      //- 장치 이름 중복을 확인하기 위한 작업
+      $("#deviceId").blur(function() {
+        if($("#deviceId").val() == "") {
+          $("#notice").text("장치 이름을 입력해주세요.");
+        } else {
+          $.ajax({
+            data: {
+              'deviceId': document.getElementById("deviceId").value
+            },
+            type: 'get',
+            dataType : 'html',
+            url: "/registModule/api/checkId", 
+            contentType: 'application/json', 
+            success: (success) => {
+              if(success == "yes") {
+                $("#notice").text("중복된 이름입니다.");
+                $("#notice").removeAttr('style');     //속성의 유무로 버튼 작업을 위한 속성 해제 작업
+                $("#registerButton").attr('disabled', true);
+              } else {
+                $("#notice").text("사용 가능한 이름입니다.");
+                $("#notice").attr('style', "font-family: 'Do Hyeon', sans-serif; color: green;");   //속성 변경
+                if($("#location").val()!="") {
+                  $("#registerButton").attr('disabled', false);
+                }
+              }
+            },
+            error: (err) => {
+              console.log(err)
+            }
+          })
+        }
+      })
+
+      //- 중복과 공백을 방지하기 위한 버튼 (비)활성화 작업
       $("#location").keyup(function() {
-        if(($("#deviceId").val()!="") && ($("#location").val()!="")) {
+        console.log($("#notice").is('[style]'));
+        if($("#notice").is('[style]') && ($("#location").val()!="")) {
           $("#registerButton").attr('disabled', false);
         } else {
           $("#registerButton").attr('disabled', true);
         }
-      })
+      });
     })
     
   p#title 장치 등록
@@ -67,10 +101,12 @@ block content
       th 등록 일자
       td 
         input(type='text' class='form-control' id='dateInput' disabled)
+
+  p#notice 장치 이름을 입력해주세요.
+
   script.
     document.getElementById('dateInput').value = moment().format('YYYY-MM-DD');
 
-  br
   div
     button.btn.btn-dark(onclick="registerModule()" style='margin-right: 5px;' disabled id="registerButton") 등록
     button.btn.btn-dark(onclick="location.href='/module'" style='margin-left: 5px;') 취소

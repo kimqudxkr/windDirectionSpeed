@@ -23,3 +23,8 @@ body {
     font-family: 'Do Hyeon', sans-serif;
     width: 300px;
 }
+
+#notice {
+    font-family: 'Do Hyeon', sans-serif;
+    color : red;
+}

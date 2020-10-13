@@ -6,6 +6,7 @@ block content
   script.
     document.getElementById("module").className="current";
 
+    //- 삭제 버튼을 눌러 모듈 정보를 삭제하는 함수
     const deleteModule = (deviceId) => {
       if(confirm("삭제하시겠습니까?")) {
         $.ajax({

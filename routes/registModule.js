@@ -7,6 +7,7 @@ router.get('/', function(req, res, next) {
   res.render('registModule');
 });
 
+// 장치 등록 버튼 눌렀을 때
 router.get('/api/regist', function(req, res, next) {
   const params = req.query;
   const query = `INSERT INTO modulelist(deviceId, deviceType, location) 
@@ -21,6 +22,7 @@ router.get('/api/regist', function(req, res, next) {
   });
 });
 
+// 장치 등록에서 장치 이름이 중복되는지 검사
 router.get('/api/checkId', function(req, res, next) {
   const params = req.query;
   const query = `SELECT * from moduleList WHERE deviceId='${params.deviceId}'`;

@@ -22,7 +22,7 @@ block content
           const selectType = document.getElementById("deviceType");
           const len = selectType.options.length;
 
-          //- select의 option들 중 값이 일치하는 것을 선택되도록 설정
+          //- select의 option들 중 DB와 값이 일치하는 것이 선택되도록 설정
           for(let i=0; i<len; i++) {
             if(selectType.options[i].value == type) {
               selectType.options[i].selected = "selected";
@@ -35,7 +35,7 @@ block content
       })
     })
 
-    //- 수정을 하기 위하여 ajax를 사용하는 함수
+    //- 수정하여 정보를 백엔드로 넘기는 함수
     const modifyModule = () => {
       const deviceTypeOption = document.getElementById("deviceType");
       const deviceType = deviceTypeOption.options[deviceTypeOption.selectedIndex].value;

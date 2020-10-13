@@ -6,7 +6,7 @@ block content
   script.
     document.getElementById("module").className="current";
 
-    //- 등록 버튼을 눌러 백엔드로 장치 등록 정보를 넘기는 함수
+    //- 등록 버튼을 눌렀을 때 장치 정보를 DB에 INSERT 요청 하는 함수
     const registerModule = () => {
       //- 장치 유형 정보를 받아옴
       const deviceTypeOption = document.getElementById("deviceType");
@@ -33,13 +33,13 @@ block content
       })
     }
     
-    //- 실시간 상호작용을 위한 구간
+    //- 장치 등록 시 실시간 상호작용을 위한 구간
     $(document).ready(function() {
       //- 장치 이름 중복을 확인하기 위한 작업
-      $("#deviceId").blur(function() {
+      $("#deviceId").blur(function() {      //- deviceId input에서 포커스가 해제되는 순간
         if($("#deviceId").val() == "") {
           $("#notice").text("장치 이름을 입력해주세요.");
-        } else {
+        } else {        //- 어떤 값이 입력이 된다면
           $.ajax({
             data: {
               'deviceId': document.getElementById("deviceId").value
@@ -49,13 +49,14 @@ block content
             url: "/registModule/api/checkId", 
             contentType: 'application/json', 
             success: (success) => {
-              if(success == "yes") {
+              if(success == "yes") {        //- 중복 시
                 $("#notice").text("중복된 이름입니다.");
-                $("#notice").removeAttr('style');     //속성의 유무로 버튼 작업을 위한 속성 해제 작업
+                $("#notice").removeAttr('style');     //- 속성의 유무로 버튼 작업을 위한 속성 해제 작업
                 $("#registerButton").attr('disabled', true);
-              } else {
+              } else {         //- 비 중복 시
                 $("#notice").text("사용 가능한 이름입니다.");
-                $("#notice").attr('style', "font-family: 'Do Hyeon', sans-serif; color: green;");   //속성 변경
+                //- 속성의 유무로 버튼 작업을 위한 속성 설정 작업
+                $("#notice").attr('style', "font-family: 'Do Hyeon', sans-serif; color: green;");   
                 if($("#location").val()!="") {
                   $("#registerButton").attr('disabled', false);
                 }
@@ -70,8 +71,7 @@ block content
 
       //- 중복과 공백을 방지하기 위한 버튼 (비)활성화 작업
       $("#location").keyup(function() {
-        console.log($("#notice").is('[style]'));
-        if($("#notice").is('[style]') && ($("#location").val()!="")) {
+        if($("#notice").is('[style]') && ($("#location").val()!="")) {      //- 속성의 유무로 판단
           $("#registerButton").attr('disabled', false);
         } else {
           $("#registerButton").attr('disabled', true);

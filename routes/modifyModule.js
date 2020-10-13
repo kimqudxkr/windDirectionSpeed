@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
   }
 });
 
-// 수정 ajax에 대한 응답
+// 수정 버튼을 눌렀을 때
 router.get('/api/modify', function(req, res, next) {
   const params = req.query;
   const query = `UPDATE moduleList SET deviceType='${params.deviceType}', location='${params.location}'
@@ -41,7 +41,7 @@ router.get('/api/modify', function(req, res, next) {
   });
 });
 
-// 타입을 받아오는 ajax에 대한 응답
+// deviceId에 따른 타입을 반환
 router.get('/api/findType', function(req, res, next) {
   const params = req.query;
   const query = `SELECT deviceType FROM moduleList WHERE deviceId = '${params.deviceId}' `;

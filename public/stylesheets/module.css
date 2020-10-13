@@ -43,3 +43,14 @@ body {
     font-family: 'Do Hyeon', sans-serif;
     color : red;
 }
+
+.pagination {
+    justify-content: center;
+  }
+
+.pagination button {
+    display: inline-block;
+    margin-right: 10px;
+    cursor: pointer;
+}
+  

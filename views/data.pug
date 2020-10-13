@@ -245,6 +245,14 @@ block content
             select#endHour
                 -for (let i = 0; i < 24; i++)
                   option(value=i < 10 ? '0' + i : i)= (i < 10 ? '0' + i : i)+'시'
+        .row
+          .col-3 ■ 장치 유형 설정
+          .col-4
+            select#deviceType(style="width: 100px; margin-left: 0px;")
+              option(value="all") 모든 장치
+              each typeList in moduleType
+                option(value=typeList.deviceType) #{typeList.deviceId}
+
     .row.info-table
       .col-12
         div(style='margin-left:390px') 측정자료(수치) 

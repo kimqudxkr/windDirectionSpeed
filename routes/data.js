@@ -24,11 +24,24 @@ const selectOption = (params) => {
 
 /* GET databyday page. */
 router.get('/', (req, res, next) => {  
+  const moduleQuery = `SELECT deviceId FROM moduleList`;
+  let moduleQueryRes;
+  
+  connection.query(moduleQuery,(err, rows, fields) => {
+    if(!err) {
+      moduleQueryRes = rows;
+      console.log(moduleQueryRes);
+    } else {
+      res.send(err);
+    }
+  });
+
   // 데이터베이스에 존재하는 모든 데이터 조회
   const query = `
     SELECT AVG(windDirection) AS windDirection, 
             ROUND(AVG(substr(windSpeed, 1, 3)), 2) AS windSpeed,
-            rgst_dt AS rgstDt
+            rgst_dt AS rgstDt,
+            deviceId
     FROM finedust_tb 
     GROUP BY SUBSTR(rgst_dt, 1, 10) 
     ORDER BY rgst_dt DESC`;
@@ -42,7 +55,7 @@ router.get('/', (req, res, next) => {
                                               rgstDt: moment(data.rgstDt).format('YYYY-MM-DD')
                                             }
                                           })
-                          });
+                          ,'moduleType':moduleQueryRes});
     } 
     else {
       res.render('data', err);

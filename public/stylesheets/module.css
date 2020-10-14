@@ -1,6 +1,7 @@
 body {
     background-color: #D9D7D7;
     text-align: center;
+    font-family: 'Do Hyeon', sans-serif;
 }
 
 #title {
@@ -10,7 +11,6 @@ body {
 
 #listTable {
     margin: auto;
-    font-family: 'Do Hyeon', sans-serif;
     width: 550px;
 }
 

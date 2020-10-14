@@ -27,7 +27,7 @@ block content
       jQuery('.pagination li:first-child').addClass("disabled");
 
       //- 필터 선택에 따라 작동하기 위해 select와 datepicker는 숨김
-      $('.input-group #deviceType').hide();
+      $('.input-group .deviceType').hide();
       $("#dateSetting").hide();
       searchFilter();
     });
@@ -110,10 +110,10 @@ block content
     
     //- 검색창의 왼쪽 필터 작동 함수
     const searchFilter = () => {
-      $('.search-panel .dropdown-menu').find('a').click(function(e) {
+      $('.search-panel .dropdown-menu').find('li').click(function(e) {
         e.preventDefault();
-        var param = $(this).attr("href").replace("#","");
-        var concept = $(this).text();
+        let param = $(this).attr("id");
+        let concept = $(this).text();
 
         //- 선택한 필터는 hidden input인 searchParam의 value가 됨
         $('.search-panel span#searchConcept').text(concept);
@@ -122,15 +122,15 @@ block content
         //- 필터 선택에 따라 input/select/datepicker로 구분
         if($(this).text()=="장치유형") {
           $('.input-group .form-control').hide();
-          $('.input-group #deviceType').show();
+          $('.input-group .deviceType').show();
           $("#dateSetting").hide();
         } else if($(this).text()=="등록일자") {
           $('.input-group .form-control').hide();
-          $('.input-group #deviceType').hide();
+          $('.input-group .deviceType').hide();
           $("#dateSetting").show();
         } else {
           $('.input-group .form-control').show();
-          $('.input-group #deviceType').hide();
+          $('.input-group .deviceType').hide();
           $("#dateSetting").hide();
         }
       });
@@ -143,7 +143,7 @@ block content
 
       //- 필터 선택에 따라 matching에 저장될 값이 달라짐
       switch(column) { 
-        case "deviceType" : matching = $(".input-group #deviceType").val(); break;
+        case "deviceType" : matching = $(".input-group .deviceType").val(); break;
         case "rgstDt" : matching = $("#dateSetting").val(); break;
         default : matching = $('.input-group .form-control').val(); break;
       }
@@ -188,21 +188,17 @@ block content
                 span#searchConcept Filter by
                 span#caret
               ul.dropdown-menu
-                li.dropdown-item 
-                  a(href="deviceId") 장치이름
+                li.dropdown-item#deviceId 장치이름
                 li.dropdown-divider
-                li.dropdown-item 
-                  a(href="deviceType") 장치유형
+                li.dropdown-item#deviceType 장치유형
                 li.dropdown-divider
-                li.dropdown-item 
-                  a(href="location") 장치위치
+                li.dropdown-item#location 장치위치
                 li.dropdown-divider
-                li.dropdown-item 
-                  a(href="rgstDt") 등록일자
+                li.dropdown-item#rgstDt 등록일자
           
           input#searchParam(type="hidden" name="serch-param")
           input.form-control(type="text" name="x" placeholder="검색 내용을 입력하세요.")
-          select(id='deviceType' style="width: 150px" onChange="typeSetting(this)")
+          select.deviceType(style="width: 150px" onChange="typeSetting(this)")
             option(value='풍향/풍속') 풍향/풍속
             option(value='온도/습도') 온도/습도
             option(value='미세먼지') 미세먼지

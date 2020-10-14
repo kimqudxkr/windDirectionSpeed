@@ -2,13 +2,16 @@ extends layout
 
 block content
   link(rel='stylesheet', href='/stylesheets/module.css')
-
+ 
   script.
     document.getElementById("module").className="current";
 
+    //- 페이지네이션 동작
     jQuery('document').ready(function() {
       pagination();
       jQuery('.pagination li:first-child').addClass("disabled");
+
+      searchFilter();
     });
 
     //- 삭제 버튼을 눌러 모듈 정보를 삭제하는 함수
@@ -86,9 +89,84 @@ block content
         }
       });
     }
+    
+    //- 검색창의 왼쪽 필터 작동 함수
+    const searchFilter = () => {
+      $('.search-panel .dropdown-menu').find('a').click(function(e) {
+        e.preventDefault();
+        var param = $(this).attr("href").replace("#","");
+        var concept = $(this).text();
 
-  p#title(style="margin-top:5%;") 장치 목록 
+        //- 선택한 필터는 hidden input인 search_param의 value가 됨
+        $('.search-panel span#search_concept').text(concept);
+        $('.input-group #search_param').val(param);
+      });
+    }
+    
+    //- 검색 버튼을 눌렀을 때 작동하는 함수
+    const searchModule = () => {
+      const column = $('.input-group #search_param').val();
+      const matching = $('.input-group .form-control').val();
 
+      if(column=="") {
+        alert("필터를 설정해 주세요.");
+      } else if(matching=="") {
+        alert("검색어를 입력해 주세요.")
+      } else {
+        alert(`${column}조건으로 ${matching}을 검색합니다.`);
+
+        $.ajax({
+          data: {
+            'column': column,
+            'matching': matching,
+          },
+          type: 'get',
+          dataType : 'html',
+          url: "/module/api/moduleSearch", 
+          contentType: 'application/json', 
+          success: (result) => {
+            console.log(result);
+            $("#listTable > tbody").html(result);
+            jQuery('.pagination *').remove();
+            pagination();
+          },
+          error: (err) => {
+            console.log(err)
+          }
+        })
+      }
+      
+    }
+
+  p#title(style="margin-top:3%;") 장치 목록 
+
+  div.container 
+    div.row
+      div.col-6.offset-3
+        div.input-group
+          div.input-group-btn.search-panel
+            div.dropdown
+              button.btn.btn-btn-default.dropdown-toggle(type="button" data-toggle="dropdown")
+                span#search_concept Filter by
+                span#caret
+              ul.dropdown-menu
+                li.dropdown-item 
+                  a(href="deviceId") 장치이름
+                li.dropdown-divider
+                li.dropdown-item 
+                  a(href="deviceType") 장치유형
+                li.dropdown-divider
+                li.dropdown-item 
+                  a(href="location") 장치위치
+                li.dropdown-divider
+                li.dropdown-item 
+                  a(href="rgstDt") 등록일자
+          
+          input#search_param(type="hidden" name="serch-param")
+          input.form-control(type="text" name="x" placeholder="검색 내용을 입력하세요.")
+          button.btn.btn-dark(type="button" onClick="searchModule()") search
+            
+  br
   table#listTable(border='1')
     thead
       tr
@@ -98,17 +176,17 @@ block content
         th 등록 일자
         th 수정
         th 삭제
-    each list in moduleList
-      tbody
-        tr
-          td #{list.deviceId}
-          td #{list.deviceType}
-          td #{list.location}
-          td #{list.rgstDt}
-          td
-            button.btn.btn-dark(class='form-control' onClick=`location.href='/modifyModule?deviceId=${list.deviceId}'`) 수정
-          td
-            button.btn.btn-dark(class='form-control' onClick=`deleteModule('${list.deviceId}')`) 삭제
+    tbody
+     each list in moduleList
+      tr
+        td #{list.deviceId}
+        td #{list.deviceType}
+        td #{list.location}
+        td #{list.rgstDt}
+        td
+          button.btn.btn-dark(class='form-control' onClick=`location.href='/modifyModule?deviceId=${list.deviceId}'`) 수정
+        td
+          button.btn.btn-dark(class='form-control' onClick=`deleteModule('${list.deviceId}')`) 삭제
   br
   ul(class='pagination')
   div

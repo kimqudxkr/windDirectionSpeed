@@ -38,4 +38,48 @@ router.get('/api/delete', function(req, res, next) {
   });
 });
 
+// 검색 버튼 눌렀을 때
+router.get('/api/moduleSearch', function(req, res, next) {
+  const params = req.query;
+  const query = `SELECT * FROM modulelist WHERE ${params.column} = '${params.matching}'`;
+
+  connection.query(query,(err, rows, fields) => {
+    if(!err) {
+      let result;   //SQL 결과를 html구문으로 반복하기 위한 함수
+
+      // 만약 데이터가 없다면 No Data로 표시
+      if(JSON.stringify(rows)=='[]') {
+        result = `
+        <tr>
+          <td colspan="6">No Data</td>
+        </tr>`
+      } 
+      else {      
+        console.log(rows);
+        rows.forEach(data => {
+          const html = `
+            <tr>
+              <td>${data.deviceId}</td>
+              <td>${data.deviceType}</td>
+              <td>${data.location}</td>
+              <td>${moment(data.rgstDt).format('YYYY-MM-DD')}</td>
+              <td>
+                <button class="btn btn-dark form-control" onclick="location.href='/modify/Module?deviceId=${data.deviceId}'">수정</button>
+              </td>
+              <td>
+                <button class="btn btn-dark form-control" onclick="deleteModule('${data.deviceId}')">삭제</button>
+              </td>
+            </tr>
+          `
+          result += html;
+        });
+      } 
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+});
+
+
 module.exports = router;

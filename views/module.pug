@@ -5,12 +5,30 @@ block content
  
   script.
     document.getElementById("module").className="current";
-
-    //- 페이지네이션 동작
+    
+    //- 사용자 정의 설정에서 달력으로 날짜 선택하기 위한 datepicker 옵션들
+    $( function() {
+      $.datepicker.setDefaults({
+        defaultDate: new Date(),
+        dateFormat: 'yy-mm-dd',
+        showMonthAfterYear: true,
+        monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+        changeMonth: true,
+        changeYear: true,
+      });
+      $("#dateSetting").datepicker().val(moment().format('YYYY-MM-DD'));
+    });
+    
     jQuery('document').ready(function() {
+      //- 페이지네이션 동작
       pagination();
       jQuery('.pagination li:first-child').addClass("disabled");
 
+      //- 필터 선택에 따라 작동하기 위해 select와 datepicker는 숨김
+      $('.input-group #deviceType').hide();
+      $("#dateSetting").hide();
       searchFilter();
     });
 
@@ -97,24 +115,45 @@ block content
         var param = $(this).attr("href").replace("#","");
         var concept = $(this).text();
 
-        //- 선택한 필터는 hidden input인 search_param의 value가 됨
-        $('.search-panel span#search_concept').text(concept);
-        $('.input-group #search_param').val(param);
+        //- 선택한 필터는 hidden input인 searchParam의 value가 됨
+        $('.search-panel span#searchConcept').text(concept);
+        $('.input-group #searchParam').val(param);
+
+        //- 필터 선택에 따라 input/select/datepicker로 구분
+        if($(this).text()=="장치유형") {
+          $('.input-group .form-control').hide();
+          $('.input-group #deviceType').show();
+          $("#dateSetting").hide();
+        } else if($(this).text()=="등록일자") {
+          $('.input-group .form-control').hide();
+          $('.input-group #deviceType').hide();
+          $("#dateSetting").show();
+        } else {
+          $('.input-group .form-control').show();
+          $('.input-group #deviceType').hide();
+          $("#dateSetting").hide();
+        }
       });
     }
     
     //- 검색 버튼을 눌렀을 때 작동하는 함수
     const searchModule = () => {
-      const column = $('.input-group #search_param').val();
-      const matching = $('.input-group .form-control').val();
+      const column = $('.input-group #searchParam').val();    //- 검색할 콜럼 저장
+      let matching;   //- 검색할 값 저장
 
+      //- 필터 선택에 따라 matching에 저장될 값이 달라짐
+      switch(column) { 
+        case "deviceType" : matching = $(".input-group #deviceType").val(); break;
+        case "rgstDt" : matching = $("#dateSetting").val(); break;
+        default : matching = $('.input-group .form-control').val(); break;
+      }
+
+      //- 검색을 시작
       if(column=="") {
         alert("필터를 설정해 주세요.");
       } else if(matching=="") {
         alert("검색어를 입력해 주세요.")
       } else {
-        alert(`${column}조건으로 ${matching}을 검색합니다.`);
-
         $.ajax({
           data: {
             'column': column,
@@ -135,10 +174,9 @@ block content
           }
         })
       }
-      
     }
 
-  p#title(style="margin-top:3%;") 장치 목록 
+  p#title(style="margin-top:2%;") 장치 목록 
 
   div.container 
     div.row
@@ -147,7 +185,7 @@ block content
           div.input-group-btn.search-panel
             div.dropdown
               button.btn.btn-btn-default.dropdown-toggle(type="button" data-toggle="dropdown")
-                span#search_concept Filter by
+                span#searchConcept Filter by
                 span#caret
               ul.dropdown-menu
                 li.dropdown-item 
@@ -162,8 +200,13 @@ block content
                 li.dropdown-item 
                   a(href="rgstDt") 등록일자
           
-          input#search_param(type="hidden" name="serch-param")
+          input#searchParam(type="hidden" name="serch-param")
           input.form-control(type="text" name="x" placeholder="검색 내용을 입력하세요.")
+          select(id='deviceType' style="width: 150px" onChange="typeSetting(this)")
+            option(value='풍향/풍속') 풍향/풍속
+            option(value='온도/습도') 온도/습도
+            option(value='미세먼지') 미세먼지
+          input#dateSetting(type="input" style="width: 150px; text-align:center")
           button.btn.btn-dark(type="button" onClick="searchModule()") search
             
   br
@@ -190,4 +233,4 @@ block content
   br
   ul(class='pagination')
   div
-    button.btn.btn-dark(onclick="location.href='/registModule'" style='margin-left: 5px') 새 장치 등록
+    button.btn.btn-dark(onclick="location.href='/registModule'") 새 장치 등록

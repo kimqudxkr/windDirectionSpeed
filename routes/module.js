@@ -41,7 +41,9 @@ router.get('/api/delete', function(req, res, next) {
 // 검색 버튼 눌렀을 때
 router.get('/api/moduleSearch', function(req, res, next) {
   const params = req.query;
-  const query = `SELECT * FROM modulelist WHERE ${params.column} = '${params.matching}'`;
+
+  // 검색은 해당 글자를 포함하는 모든 데이터를 불러오기에 LIKE 사용(장치 이름, 위치, 일자 등)
+  const query = `SELECT * FROM modulelist WHERE ${params.column} LIKE '%${params.matching}%'`;
 
   connection.query(query,(err, rows, fields) => {
     if(!err) {
@@ -55,7 +57,6 @@ router.get('/api/moduleSearch', function(req, res, next) {
         </tr>`
       } 
       else {      
-        console.log(rows);
         rows.forEach(data => {
           const html = `
             <tr>

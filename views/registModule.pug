@@ -2,7 +2,7 @@ extends layout
 
 block content
   link(rel='stylesheet', href='/stylesheets/module.css')
-  include api
+  include secret
   
   script.
     document.getElementById("module").className="current";
@@ -109,9 +109,22 @@ block content
 
         geocoder.geocode({'location': latlng}, function(results, status) {
           if( status === "OK") {
-            alert(JSON.stringify(results));
+            console.log(results);
+            $("#myModal p").text(results[0].formatted_address);
+
+            //- 지도를 클릭해 주소를 받으면 설정 버튼이 생기도록 함
+            const confirm = '<button class="btn btn-dark" id="confirmButton" style="margin-left: 10px">설정</button>';
+            $("#myModal p").append(confirm);
+
+            //- 설정버튼 클릭시 해당 주소가 장치 위치 input에 입력됨
+            $("#confirmButton").on("click", function() {
+              //- TODO : 글자 50자 제한으로 잘라서 넣어야 함
+              $("#location").val(results[0].formatted_address);
+              modal.style.display = "none";
+            })
+            //- $("")
           } else {
-            alert("주소 못불러옴");            
+            alert("잠시 후 다시 시도하세요.");            
           }
         });
       });

@@ -27,6 +27,8 @@ block content
     jQuery('document').ready(function() {
       pagination();
       jQuery('.pagination li:first-child').addClass("disabled");
+
+      floatingFunction();
     });
 
     //- 기간 설정 옵션 중 주간에서 선택 월의 주가 최대 몇까지 있는지 구하기 위한 함수
@@ -209,6 +211,26 @@ block content
       });
     }
   
+    //- floating button 작동을 위한 함수들
+    window.onscroll = function() {scrollFunction()};
+
+    //- 스크롤의 현재 위치를 파악하여 버튼을 생겼다 없앴다 함
+    function scrollFunction() {
+      if(document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+        document.getElementById("scrollTop").style.display = "block";
+      } else {
+        document.getElementById("scrollTop").style.display = "none";
+      }
+    }
+
+    //- 버튼을 누르면 동작하는 함수로 페이지 최상단으로 이동
+    function topFunction() {
+      $('html,body').animate({ scrollTop: 0}, 500);
+    }
+
+  div.hidden-md.hidden-sm.hidden-xs#scrollTop(onClick="topFunction()")
+    img(src="images/floatingButton.png")
+
   #info-container.container-fluid
     .row.info-title
       .col-12 측정 자료 조회

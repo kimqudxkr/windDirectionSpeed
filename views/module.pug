@@ -198,11 +198,11 @@ block content
           
           input#searchParam(type="hidden" name="serch-param")
           input.form-control(type="text" name="x" placeholder="검색 내용을 입력하세요.")
-          select.deviceType(style="width: 150px" onChange="typeSetting(this)")
+          select.deviceType(style="width: 370px; text-align-last: center" onChange="typeSetting(this)")
             option(value='풍향/풍속') 풍향/풍속
             option(value='온도/습도') 온도/습도
             option(value='미세먼지') 미세먼지
-          input#dateSetting(type="input" style="width: 150px; text-align:center")
+          input#dateSetting(type="input" style="width: 370px; text-align:center")
           button.btn.btn-dark(type="button" onClick="searchModule()") search
             
   br

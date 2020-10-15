@@ -2,6 +2,16 @@ body {
   background-color: #D9D7D7;
 }
 
+#scrollTop {
+  display: none;
+  position: fixed;
+  top: 600px;
+  right: 50%;
+  margin-right: -683px;
+  cursor: pointer;
+  z-index: 99;
+}
+
 #info-table thead {
   font-family: 'Do Hyeon', sans-serif;
   color: white;

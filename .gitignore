@@ -61,3 +61,6 @@ fineduststatusapp-*
 
 ### 설정파일 ###
 config.json
+
+# Google Map API
+views/secret.pug

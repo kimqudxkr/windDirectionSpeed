@@ -2,7 +2,8 @@ extends layout
 
 block content
   link(rel='stylesheet', href='/stylesheets/module.css')
-
+  include api
+  
   script.
     document.getElementById("module").className="current";
 
@@ -79,7 +80,43 @@ block content
         }
       });
     })
-    
+
+    //- 장치 위치 input 클릭 시 google map 띄우는 함수
+    const popUp = () => {
+      const modal = document.getElementById('myModal');
+      const span = document.getElementsByClassName("close")[0];  
+      const geocoder = new google.maps.Geocoder;
+
+      //- 팝업창 띄움
+      modal.style.display = "block";
+      
+      //- x 클릭시 팝업창 닫음
+      span.onclick = function() {
+        modal.style.display = "none";
+      }
+
+      //- 현재 로텍엔지니어링 위도, 경도를 중앙으로 하는 지도 생성
+      const uluru = {lat: 35.504113, lng: 129.305680};
+      const map = new google.maps.Map(
+        document.getElementById("map"),{zoom:15, center: uluru});
+      const marker = new google.maps.Marker({
+        position: uluru, map:map
+      });
+
+      //- 지도 클릭시 위도, 경도 받으면서 마커 표시하고 주소 위에 띄움
+      map.addListener('click', function(e) {
+        let latlng = {lat: e.latLng.lat(), lng: e.latLng.lng()};
+
+        geocoder.geocode({'location': latlng}, function(results, status) {
+          if( status === "OK") {
+            alert(JSON.stringify(results));
+          } else {
+            alert("주소 못불러옴");            
+          }
+        });
+      });
+    }
+
   p#title(style="margin-top:5%;") 장치 등록
 
   table#registTable(border='1')
@@ -97,7 +134,7 @@ block content
     tr
       th 장치 위치
       td
-        input(type='text' class='form-control' id='location' placeholder="Device Location")
+        input(type='text' class='form-control' id='location' placeholder="Device Location" onclick="popUp()")
     tr
       th 등록 일자
       td 
@@ -111,3 +148,9 @@ block content
   div
     button.btn.btn-dark(onclick="registerModule()" style='margin-right: 5px;' disabled id="registerButton") 등록
     button.btn.btn-dark(onclick="location.href='/module'" style='margin-left: 5px;') 취소
+
+  div.modal#myModal
+    div.modal-content
+      span.close &times;
+      p 아래 지도에서 위치를 선택하세요.
+      div#map

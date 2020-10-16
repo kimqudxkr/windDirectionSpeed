@@ -85,7 +85,7 @@ block content
     const popUp = () => {
       const modal = document.getElementById('myModal');
       const span = document.getElementsByClassName("close")[0];  
-      const geocoder = new google.maps.Geocoder;
+      //- const geocoder = new google.maps.Geocoder;
 
       //- 팝업창 띄움
       modal.style.display = "block";
@@ -96,38 +96,47 @@ block content
       }
 
       //- 현재 로텍엔지니어링 위도, 경도를 중앙으로 하는 지도 생성
-      const uluru = {lat: 35.504113, lng: 129.305680};
-      const map = new google.maps.Map(
-        document.getElementById("map"),{zoom:15, center: uluru});
-      const marker = new google.maps.Marker({
-        position: uluru, map:map
-      });
+      //- const lotec = {lat: 35.504113, lng: 129.305680};
+      const mapContainer = document.getElementById("map"),
+            mapOption = {
+              center: new kakao.maps.LatLng(35.504113, 129.305680),
+              level: 4
+            };
+      
+      const map = new kakao.maps.Map(mapContainer, mapOption);
+      const geocoder = new kakao.maps.services.Geocoder();
+      const marker = new kakao.maps.Marker(),
+            infoWindow = new kakao.maps.InfoWindow({zindex:1});
+      //- const map = new google.maps.Map(
+      //-   document.getElementById("map"),{zoom:15, center: lotec});
+      //- const marker = new google.maps.Marker({
+      //-   position: lotec, map:map
+      //- });
 
-      //- 지도 클릭시 위도, 경도 받으면서 마커 표시하고 주소 위에 띄움
-      map.addListener('click', function(e) {
-        let latlng = {lat: e.latLng.lat(), lng: e.latLng.lng()};
+      //- //- 지도 클릭시 위도, 경도 받으면서 마커 표시하고 주소 위에 띄움
+      //- map.addListener('click', function(e) {
+      //-   let latlng = {lat: e.latLng.lat(), lng: e.latLng.lng()};
 
-        geocoder.geocode({'location': latlng}, function(results, status) {
-          if( status === "OK") {
-            console.log(results);
-            $("#myModal p").text(results[0].formatted_address);
+      //-   geocoder.geocode({'location': latlng}, function(results, status) {
+      //-     if( status === "OK") {
+      //-       console.log(results);
+      //-       $("#myModal p").text(results[0].formatted_address);
 
-            //- 지도를 클릭해 주소를 받으면 설정 버튼이 생기도록 함
-            const confirm = '<button class="btn btn-dark" id="confirmButton" style="margin-left: 10px">설정</button>';
-            $("#myModal p").append(confirm);
+      //-       //- 지도를 클릭해 주소를 받으면 설정 버튼이 생기도록 함
+      //-       const confirm = '<button class="btn btn-dark" id="confirmButton" style="margin-left: 10px">설정</button>';
+      //-       $("#myModal p").append(confirm);
 
-            //- 설정버튼 클릭시 해당 주소가 장치 위치 input에 입력됨
-            $("#confirmButton").on("click", function() {
-              //- TODO : 글자 50자 제한으로 잘라서 넣어야 함
-              $("#location").val(results[0].formatted_address);
-              modal.style.display = "none";
-            })
-            //- $("")
-          } else {
-            alert("잠시 후 다시 시도하세요.");            
-          }
-        });
-      });
+      //-       //- 설정버튼 클릭시 해당 주소가 장치 위치 input에 입력됨
+      //-       $("#confirmButton").on("click", function() {
+      //-         $("#location").val(results[0].formatted_address);
+      //-         modal.style.display = "none";
+      //-       })
+      //-       //- $("")
+      //-     } else {
+      //-       alert("잠시 후 다시 시도하세요.");            
+      //-     }
+      //-   });
+      //- });
     }
 
   p#title(style="margin-top:5%;") 장치 등록

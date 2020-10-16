@@ -2,7 +2,8 @@ extends layout
 
 block content
   link(rel='stylesheet', href='/stylesheets/module.css')
-
+  include secret
+  
   script.
     document.getElementById("module").className="current";
 
@@ -61,6 +62,116 @@ block content
       })
     }
 
+    //- 장치 위치 input 클릭 시 kakao map 띄우는 함수
+    let flag = true;
+    const popUp = () => {
+      const modal = document.getElementById('myModal');
+      const span = document.getElementsByClassName("close")[0];  
+
+      //- 팝업창 띄움
+      modal.style.display = "block";
+
+      //- x 클릭시 팝업창 닫음
+      span.onclick = function() {
+        modal.style.display = "none";
+      }
+
+      //- 현재 로텍엔지니어링 위도, 경도를 중앙으로 하는 지도 생성
+      const mapContainer = document.getElementById("map"),
+        mapOption = {
+          center: new kakao.maps.LatLng(35.504113, 129.305680),
+          level: 4
+        };
+
+      //- 지도 객체, 주소-좌표 변환 객체, 마커 객체, 윈도우인포 객체 생성
+      const map = new kakao.maps.Map(mapContainer, mapOption);
+      const geocoder = new kakao.maps.services.Geocoder();
+      const marker = new kakao.maps.Marker()
+      const infowindow = new kakao.maps.InfoWindow({zindex:1});
+
+      //- 지도 화면 클릭시 이벤트리스너
+      kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+        //- 마우스 클릭한 곳의 위도와 경도를 읽어와 도로명주소로 변환
+        geocoder.coord2Address(mouseEvent.latLng.getLng(), mouseEvent.latLng.getLat(), function(result, status) {
+          if(status === kakao.maps.services.Status.OK) {
+            //- 도로명 주소가 없을 경우 지번 주소로 받아옴
+            const detailAddr = !!result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
+
+            //- 마우스 클릭 위치에 마커 표시
+            displayMarker(marker, infowindow, map, mouseEvent.latLng, detailAddr);
+
+            afterSelect(detailAddr);
+          }
+        });
+      });
+
+      //- 주소 검색하여 지도 표시하기
+      if(flag) {
+        createOnce();
+        flag = false;
+      }
+
+      //- input 창에 주소를 입력하고 만들어진 버튼을 클릭할 시
+      $("#searchButton").on('click', function() {
+        //- 입력 받은 주소를 기준으로 위도, 경도 받아옴
+        geocoder.addressSearch($("#searchInput").val(), function(result, status) {
+          if(status === kakao.maps.services.Status.OK) {
+            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+            //- 받아온 위도 경도로 정확한 도로명주소를 반환
+            geocoder.coord2Address(result[0].x, result[0].y, function(result, status) {
+              if(status === kakao.maps.services.Status.OK) {
+                //- 도로명 주소가 없을 경우 지번 주소로 받아옴
+                const detailAddr = !!result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
+
+                //- 해당 주소에 마커 표시
+                displayMarker(marker, infowindow, map, coords, detailAddr);
+
+                //- 해당 주소를 지도 가운데로 설정
+                map.setCenter(coords);
+
+                afterSelect(detailAddr);
+              }
+            });
+          }
+        })
+      })
+
+      //- 주소를 받은 후 텍스트 변경과 버튼을 띄우는 함수
+      const afterSelect = (param) => {
+        //- 받아온 주소와 설정 버튼을 띄움
+        $("#myModal p").text(param);
+        const confirm = '<button class="btn btn-dark" id="confirmButton" style="margin-left: 10px">설정</button>';
+        $("#myModal p").append(confirm);
+
+        //- 설정버튼 클릭시 해당 주소가 장치 위치 input에 입력되며 팝업창 사라짐
+        $("#confirmButton").on("click", function() {
+          $("#location").val(param);
+          modal.style.display = "none";
+        });
+      }
+
+      //- 마커 표시 함수
+      const displayMarker = (marker, infowindow, map, latlan, address) => {
+        //- 마커 위치 설정
+        marker.setPosition(latlan);
+        marker.setMap(map);
+
+        //- 인포윈도우 내용 설정
+        infowindow.setContent(`<div style="width: 150px; text-align: center; padding: 6px 0;">${address}</div>`);
+        infowindow.open(map, marker);
+      }
+    }
+
+    //- modal pop up을 띄울때 태그 중복 생성을 방지하기 위한 함수
+    const createOnce = () => {
+      const searchInput = '<input type="text" id="searchInput" />';
+      const searchButton = '<button class="btn btn-dark" style="margin-left: 5px;" id="searchButton">검색</button>';
+
+      $(".searchAdd").append(searchInput);
+      $(".searchAdd").append(searchButton);
+    }
+
   p#title(style="margin-top:5%;") 장치 정보 수정
 
   table#registTable(border='1')
@@ -78,7 +189,7 @@ block content
     tr
       th 장치 위치
       td
-        input(type='text' class='form-control' id='location' value=moduleInfo[0].location)
+        input(type='text' class='form-control' id='location' value=moduleInfo[0].location onclick="popUp()")
     tr
       th 등록 일자
       td 
@@ -88,3 +199,10 @@ block content
   div
     button.btn.btn-dark(onclick="modifyModule()" style='margin-right: 5px;') 수정
     button.btn.btn-dark(onclick="location.href='/module'" style='margin-left: 5px;') 취소
+
+  div.modal#myModal
+    div.modal-content
+      span.close &times;
+      p 아래 지도에서 위치를 선택하거나 주소로 검색하세요.
+      div.searchAdd
+      div#map

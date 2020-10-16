@@ -3,7 +3,7 @@ extends layout
 block content
   link(rel='stylesheet', href='/stylesheets/module.css')
   include secret
-  
+
   script.
     document.getElementById("module").className="current";
 
@@ -33,7 +33,7 @@ block content
         }
       })
     }
-    
+
     //- 장치 등록 시 실시간 상호작용을 위한 구간
     $(function() {
       //- 장치 이름 중복을 확인하기 위한 작업
@@ -82,13 +82,14 @@ block content
     })
 
     //- 장치 위치 input 클릭 시 kakao map 띄우는 함수
+    let flag = true;
     const popUp = () => {
       const modal = document.getElementById('myModal');
       const span = document.getElementsByClassName("close")[0];  
 
       //- 팝업창 띄움
       modal.style.display = "block";
-      
+
       //- x 클릭시 팝업창 닫음
       span.onclick = function() {
         modal.style.display = "none";
@@ -96,20 +97,20 @@ block content
 
       //- 현재 로텍엔지니어링 위도, 경도를 중앙으로 하는 지도 생성
       const mapContainer = document.getElementById("map"),
-            mapOption = {
-              center: new kakao.maps.LatLng(35.504113, 129.305680),
-              level: 4
-            };
-      
+        mapOption = {
+          center: new kakao.maps.LatLng(35.504113, 129.305680),
+          level: 4
+        };
+
       //- 지도 객체, 주소-좌표 변환 객체, 마커 객체, 윈도우인포 객체 생성
       const map = new kakao.maps.Map(mapContainer, mapOption);
       const geocoder = new kakao.maps.services.Geocoder();
       const marker = new kakao.maps.Marker()
       const infowindow = new kakao.maps.InfoWindow({zindex:1});
-      
+
       //- 지도 화면 클릭시 이벤트리스너
       kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-        //- 마우스 클릭한 곳의 위도와 경도를 읽어와 도로명주소로 변환 하는 함수
+        //- 마우스 클릭한 곳의 위도와 경도를 읽어와 도로명주소로 변환
         geocoder.coord2Address(mouseEvent.latLng.getLng(), mouseEvent.latLng.getLat(), function(result, status) {
           if(status === kakao.maps.services.Status.OK) {
             //- 도로명 주소가 없을 경우 지번 주소로 받아옴
@@ -124,12 +125,10 @@ block content
       });
 
       //- 주소 검색하여 지도 표시하기
-      //- 검색창과 버튼 생성
-      const searchInput = '<input type="text" id="searchInput" />';
-      const searchButton = '<button class="btn btn-dark" style="margin-left: 5px;" id="searchButton">검색</button>';
-  
-      $(".searchAdd").append(searchInput);
-      $(".searchAdd").append(searchButton);
+      if(flag) {
+        createOnce();
+        flag = false;
+      }
 
       //- input 창에 주소를 입력하고 만들어진 버튼을 클릭할 시
       $("#searchButton").on('click', function() {
@@ -138,19 +137,19 @@ block content
           if(status === kakao.maps.services.Status.OK) {
             const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-            //- 받아온 위도 경도로 정확한 도로명 주소를 받아옴
+            //- 받아온 위도 경도로 정확한 도로명주소를 반환
             geocoder.coord2Address(result[0].x, result[0].y, function(result, status) {
               if(status === kakao.maps.services.Status.OK) {
                 //- 도로명 주소가 없을 경우 지번 주소로 받아옴
-                const detail = !!result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
+                const detailAddr = !!result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
 
                 //- 해당 주소에 마커 표시
-                displayMarker(marker, infowindow, map, coords, detail);
+                displayMarker(marker, infowindow, map, coords, detailAddr);
 
                 //- 해당 주소를 지도 가운데로 설정
                 map.setCenter(coords);
 
-                afterSelect(detail);
+                afterSelect(detailAddr);
               }
             });
           }
@@ -176,13 +175,22 @@ block content
         //- 마커 위치 설정
         marker.setPosition(latlan);
         marker.setMap(map);
-        
+
         //- 인포윈도우 내용 설정
         infowindow.setContent(`<div style="width: 150px; text-align: center; padding: 6px 0;">${address}</div>`);
         infowindow.open(map, marker);
       }
     }
 
+    //- modal pop up을 띄울때 태그 중복 생성을 방지하기 위한 함수
+    const createOnce = () => {
+      const searchInput = '<input type="text" id="searchInput" />';
+      const searchButton = '<button class="btn btn-dark" style="margin-left: 5px;" id="searchButton">검색</button>';
+
+      $(".searchAdd").append(searchInput);
+      $(".searchAdd").append(searchButton);
+    }
+    
   p#title(style="margin-top:5%;") 장치 등록
 
   table#registTable(border='1')
@@ -200,7 +208,7 @@ block content
     tr
       th 장치 위치
       td
-        input(type='text' class='form-control' id='location' placeholder="Device Location" onclick="popUp()")
+        input(type='text' class='form-control' id='location' placeholder="여기를 클릭하세요" onclick="popUp()")
     tr
       th 등록 일자
       td 

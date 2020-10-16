@@ -104,7 +104,11 @@ block content
       //- 지도 객체와 주소-좌표 변환 객체 생성
       const map = new kakao.maps.Map(mapContainer, mapOption);
       const geocoder = new kakao.maps.services.Geocoder();
-      
+
+      //- 마커 객체 생성
+      const marker = new kakao.maps.Marker(),
+            infowindow = new kakao.maps.InfoWindow({zindex:1});
+
       //- 지도 화면 클릭시 이벤트리스너
       kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
         //- 마우스 클릭한 곳의 위도와 경도를 읽어와 도로명주소로 변환 하는 함수
@@ -112,6 +116,10 @@ block content
           if(status === kakao.maps.services.Status.OK) {
             //- 도로명 주소가 없을 경우 지번 주소로 받아옴
             const detailAddr = !!result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
+
+            //- 마우스 클릭 위치에 마커 생성
+            marker.setPosition(mouseEvent.latLng);
+            marker.setMap(map);
 
             //- 받아온 주소와 설정 버튼을 띄움
             $("#myModal p").text(detailAddr);

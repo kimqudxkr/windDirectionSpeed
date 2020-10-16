@@ -101,14 +101,12 @@ block content
               level: 4
             };
       
-      //- 지도 객체와 주소-좌표 변환 객체 생성
+      //- 지도 객체, 주소-좌표 변환 객체, 마커 객체, 윈도우인포 객체 생성
       const map = new kakao.maps.Map(mapContainer, mapOption);
       const geocoder = new kakao.maps.services.Geocoder();
-
-      //- 마커 객체 생성
-      const marker = new kakao.maps.Marker(),
-            infowindow = new kakao.maps.InfoWindow({zindex:1});
-
+      const marker = new kakao.maps.Marker()
+      const infowindow = new kakao.maps.InfoWindow({zindex:1});
+      
       //- 지도 화면 클릭시 이벤트리스너
       kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
         //- 마우스 클릭한 곳의 위도와 경도를 읽어와 도로명주소로 변환 하는 함수
@@ -117,11 +115,10 @@ block content
             //- 도로명 주소가 없을 경우 지번 주소로 받아옴
             const detailAddr = !!result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
 
-            //- 마우스 클릭 위치에 마커 생성
-            marker.setPosition(mouseEvent.latLng);
-            marker.setMap(map);
+            //- 마우스 클릭 위치에 마커 표시
+            displayMarker(marker, infowindow, map, mouseEvent.latLng, detailAddr);
 
-            beforeLast(detailAddr);
+            afterSelect(detailAddr);
           }
         });
       });
@@ -134,42 +131,34 @@ block content
       $(".searchAdd").append(searchInput);
       $(".searchAdd").append(searchButton);
 
-      //- 만들어진 버튼을 클릭할 시
+      //- input 창에 주소를 입력하고 만들어진 버튼을 클릭할 시
       $("#searchButton").on('click', function() {
         //- 입력 받은 주소를 기준으로 위도, 경도 받아옴
         geocoder.addressSearch($("#searchInput").val(), function(result, status) {
           if(status === kakao.maps.services.Status.OK) {
             const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-            const homeMarker = new kakao.maps.Marker({
-              map: map,
-              position: coords,
-            });
-            let detail = "";
 
             //- 받아온 위도 경도로 정확한 도로명 주소를 받아옴
             geocoder.coord2Address(result[0].x, result[0].y, function(result, status) {
               if(status === kakao.maps.services.Status.OK) {
                 //- 도로명 주소가 없을 경우 지번 주소로 받아옴
-                detail = !!result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
+                const detail = !!result[0].road_address ? result[0].road_address.address_name : result[0].address.address_name;
 
-                //- 마커 위에 말풍선 생성
-                const infowindow = new kakao.maps.InfoWindow({
-                  content: `<div style="width: 150px; text-align: center; padding: 6px 0;">${detail}</div>`
-                });
+                //- 해당 주소에 마커 표시
+                displayMarker(marker, infowindow, map, coords, detail);
 
-                infowindow.open(map, homeMarker);
-
+                //- 해당 주소를 지도 가운데로 설정
                 map.setCenter(coords);
 
-                beforeLast(detail);
+                afterSelect(detail);
               }
             });
           }
         })
       })
 
-      //- 주소를 받아 처리하는 함수
-      const beforeLast = (param) => {
+      //- 주소를 받은 후 텍스트 변경과 버튼을 띄우는 함수
+      const afterSelect = (param) => {
         //- 받아온 주소와 설정 버튼을 띄움
         $("#myModal p").text(param);
         const confirm = '<button class="btn btn-dark" id="confirmButton" style="margin-left: 10px">설정</button>';
@@ -180,6 +169,17 @@ block content
           $("#location").val(param);
           modal.style.display = "none";
         });
+      }
+
+      //- 마커 표시 함수
+      const displayMarker = (marker, infowindow, map, latlan, address) => {
+        //- 마커 위치 설정
+        marker.setPosition(latlan);
+        marker.setMap(map);
+        
+        //- 인포윈도우 내용 설정
+        infowindow.setContent(`<div style="width: 150px; text-align: center; padding: 6px 0;">${address}</div>`);
+        infowindow.open(map, marker);
       }
     }
 

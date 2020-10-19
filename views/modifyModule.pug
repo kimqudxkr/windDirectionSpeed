@@ -89,6 +89,12 @@ block content
       const marker = new kakao.maps.Marker()
       const infowindow = new kakao.maps.InfoWindow({zindex:1});
 
+      //- 처음 지도를 띄울 때 등록된 주소에 마커를 표시
+      geocoder.addressSearch($("#location").val(), function(result, status) {
+        defaultCoords = new kakao.maps.LatLng(result[0].y, result[0].x);
+        displayMarker(marker, infowindow, map, defaultCoords, $("#location").val());
+      });
+
       //- 지도 화면 클릭시 이벤트리스너
       kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
         //- 마우스 클릭한 곳의 위도와 경도를 읽어와 도로명주소로 변환
@@ -150,17 +156,17 @@ block content
           modal.style.display = "none";
         });
       }
+    }
 
-      //- 마커 표시 함수
-      const displayMarker = (marker, infowindow, map, latlan, address) => {
-        //- 마커 위치 설정
-        marker.setPosition(latlan);
-        marker.setMap(map);
+    //- 마커 표시 함수
+    const displayMarker = (marker, infowindow, map, latlan, address) => {
+      //- 마커 위치 설정
+      marker.setPosition(latlan);
+      marker.setMap(map);
 
-        //- 인포윈도우 내용 설정
-        infowindow.setContent(`<div style="width: 150px; text-align: center; padding: 6px 0;">${address}</div>`);
-        infowindow.open(map, marker);
-      }
+      //- 인포윈도우 내용 설정
+      infowindow.setContent(`<div style="width: 150px; text-align: center; padding: 6px 0;">${address}</div>`);
+      infowindow.open(map, marker);
     }
 
     //- modal pop up을 띄울때 태그 중복 생성을 방지하기 위한 함수

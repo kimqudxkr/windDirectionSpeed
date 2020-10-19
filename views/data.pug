@@ -21,14 +21,12 @@ block content
 
       $("#startDay").datepicker().val(moment().format('YYYY-MM-DD'));
       $("#endDay").datepicker().val(moment().format('YYYY-MM-DD'));
-    });
-    
-    //- 화면 구성 후 pagination 함수 호출
-    jQuery('document').ready(function() {
+
+      //- 화면 구성 후 pagination 함수 호출
       pagination();
       jQuery('.pagination li:first-child').addClass("disabled");
 
-      floatingFunction();
+      scrollFunction();
     });
 
     //- 기간 설정 옵션 중 주간에서 선택 월의 주가 최대 몇까지 있는지 구하기 위한 함수
@@ -59,17 +57,18 @@ block content
     const changeWeek = () => {
       const year = document.getElementById("yearTerm").value;
       const month = document.getElementById("monthTerm").value;
+      const weekTermObj = document.getElementById('weekTerm');
 
       const first = getWeek(`${year}-${month}-01`);
       const last = getWeek(new Date(year, month, -1));
 
       const diff = last-first+1;
 
-      $('#weekTerm').empty();
+      weekTermObj.innerHTML = '';
 
       for(let i = 0; i<diff; i++) {
-        const option = $("<option value=\""+(i+1)+"\">"+(i+1)+"주차</option>");
-        $('#weekTerm').append(option);
+        const option = "<option value=\""+(i+1)+"\">"+(i+1)+"주차</option>";
+        weekTermObj.insertAdjacentHTML('beforeend', option);
       }
     }
 
@@ -115,47 +114,56 @@ block content
 
     //- 기간 설정 select box 선택할 때 마다 그에 해당하는 select box들을 보이고, 사라지게 하는 함수
     const selectDate = (e) => {
+      const startDayObj = document.getElementById("startDay");
+      const endDayObj = document.getElementById("endDay");
+      const startHourObj = document.getElementById("startHour");
+      const endHourObj = document.getElementById("endHour");
+      const yearTermObj = document.getElementById("yearTerm");
+      const quaterTermObj = document.getElementById("quaterTerm");
+      const monthTermObj = document.getElementById("monthTerm");
+      const weekTermObj = document.getElementById("weekTerm");
+      
       if(e.value != 'user') {
-        document.getElementById("startDay").disabled = true;
-        document.getElementById("endDay").disabled = true;
-        document.getElementById("startHour").disabled = true;
-        document.getElementById("endHour").disabled = true;
+        startDayObj.disabled = true;
+        endDayObj.disabled = true;
+        startHourObj.disabled = true;
+        endHourObj.disabled = true;
       } 
       else {
-        document.getElementById("startDay").disabled = false;
-        document.getElementById("endDay").disabled = false;
-        document.getElementById("startHour").disabled = false;
-        document.getElementById("endHour").disabled = false;
+        startDayObj.disabled = false;
+        endDayObj.disabled = false;
+        startHourObj.disabled = false;
+        endHourObj.disabled = false;
       }
 
       if(e.value == 'year') 
-        document.getElementById("yearTerm").style.display = "inline";
+        yearTermObj.style.display = "inline";
       else 
-        document.getElementById("yearTerm").style.display = "none";
+        yearTermObj.style.display = "none";
       
       if(e.value == 'quater') {
-        document.getElementById("yearTerm").style.display = "inline";
-        document.getElementById("quaterTerm").style.display = "inline";
+        yearTermObj.style.display = "inline";
+        quaterTermObj.style.display = "inline";
       } 
       else {
-        document.getElementById("quaterTerm").style.display = "none";
+        quaterTermObj.style.display = "none";
       }
 
       if(e.value == 'month') {
-        document.getElementById("yearTerm").style.display = "inline";
-        document.getElementById("monthTerm").style.display = "inline";
+        yearTermObj.style.display = "inline";
+        monthTermObj.style.display = "inline";
       } 
       else {
-        document.getElementById("monthTerm").style.display = "none";
+        monthTermObj.style.display = "none";
       }
 
       if(e.value == 'week') {
-        document.getElementById("yearTerm").style.display = "inline";
-        document.getElementById("monthTerm").style.display = "inline";
-        document.getElementById("weekTerm").style.display = "inline";
+        yearTermObj.style.display = "inline";
+        monthTermObj.style.display = "inline";
+        weekTermObj.style.display = "inline";
       }
       else 
-        document.getElementById("weekTerm").style.display = "none";
+        weekTermObj.style.display = "none";
     }
 
     //- 테이블의 데이터를 한번에 10개씩 보여주는 pagination 함수
@@ -298,4 +306,4 @@ block content
                 td #{map.windSpeed} (m/s)
                 td 모든 장치
         br
-        ul(class='pagination')
+        ul.pagination

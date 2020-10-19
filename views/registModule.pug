@@ -43,7 +43,7 @@ block content
       //- 장치 이름 중복을 확인하기 위한 작업
       deviceIdObj.addEventListener('blur', (function() {      //- deviceId input에서 포커스가 해제되는 순간
         if(deviceIdObj.value == "") {
-          noticeObj.innerHTML = "장치 이름을 입력해주세요.";
+          noticeObj.textContent = "장치 이름을 입력해주세요.";
           noticeObj.removeAttribute('style');
           registerButtonObj.disabled = true;
         } else {        //- 어떤 값이 입력이 된다면
@@ -57,11 +57,11 @@ block content
             contentType: 'application/json', 
             success: (success) => {
               if(success == "yes") {        //- 중복 시
-                noticeObj.innerHTML = "중복된 이름입니다.";
+                noticeObj.textContent = "중복된 이름입니다.";
                 noticeObj.removeAttribute('style');    //- 속성의 유무로 버튼 작업을 위한 속성 해제 작업
                 registerButtonObj.disabled = true;
               } else {         //- 비 중복 시
-                noticeObj.innerHTML = "사용 가능한 이름입니다."
+                noticeObj.textContent = "사용 가능한 이름입니다."
                 //- 속성의 유무로 버튼 작업을 위한 속성 설정 작업
                 noticeObj.setAttribute('style', "font-family: 'Do Hyeon', sans-serif; color: green;")
                 if(document.getElementById('location').value != "") {
@@ -163,7 +163,7 @@ block content
         const modalNoticeObj = document.getElementById('modalNotice');
 
         //- 받아온 주소와 설정 버튼을 띄움
-        modalNoticeObj.innerHTML = param;
+        modalNoticeObj.textContent = param;
         const confirm = '<button class="btn btn-dark" id="confirmButton" style="margin-left: 10px">설정</button>';
         modalNoticeObj.insertAdjacentHTML('beforeend', confirm);
 

@@ -90,9 +90,11 @@ block content
       const infowindow = new kakao.maps.InfoWindow({zindex:1});
 
       //- 처음 지도를 띄울 때 등록된 주소에 마커를 표시
-      geocoder.addressSearch($("#location").val(), function(result, status) {
+      const locationVal = document.getElementById('location').value;
+
+      geocoder.addressSearch(locationVal, function(result, status) {
         defaultCoords = new kakao.maps.LatLng(result[0].y, result[0].x);
-        displayMarker(marker, infowindow, map, defaultCoords, $("#location").val());
+        displayMarker(marker, infowindow, map, defaultCoords, locationVal);
       });
 
       //- 지도 화면 클릭시 이벤트리스너
@@ -118,9 +120,9 @@ block content
       }
 
       //- input 창에 주소를 입력하고 만들어진 버튼을 클릭할 시
-      $("#searchButton").on('click', function() {
+      document.getElementById('searchButton').addEventListener('click', function() {
         //- 입력 받은 주소를 기준으로 위도, 경도 받아옴
-        geocoder.addressSearch($("#searchInput").val(), function(result, status) {
+        geocoder.addressSearch(document.getElementById('searchButton').value, function(result, status) {
           if(status === kakao.maps.services.Status.OK) {
             const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
@@ -145,15 +147,26 @@ block content
 
       //- 주소를 받은 후 텍스트 변경과 버튼을 띄우는 함수
       const afterSelect = (param) => {
+        const registerButtonObj = document.getElementById('registerButton');
+        const locationObj = document.getElementById('location');
+        const modalNoticeObj = document.getElementById('modalNotice');
+
         //- 받아온 주소와 설정 버튼을 띄움
-        $("#myModal p").text(param);
+        modalNoticeObj.textContent = param;
         const confirm = '<button class="btn btn-dark" id="confirmButton" style="margin-left: 10px">설정</button>';
-        $("#myModal p").append(confirm);
+        modalNoticeObj.insertAdjacentHTML('beforeend', confirm);
 
         //- 설정버튼 클릭시 해당 주소가 장치 위치 input에 입력되며 팝업창 사라짐
-        $("#confirmButton").on("click", function() {
-          $("#location").val(param);
+        document.getElementById('confirmButton').addEventListener('click', function() {
+          locationObj.value = param;
           modal.style.display = "none";
+
+          if(document.getElementById('notice').hasAttribute('style')
+             && locationObj.value != "") {      //- 속성의 유무로 판단
+            registerButtonObj.disabled = false;
+          } else {
+            registerButtonObj.disabled = true;
+          }
         });
       }
     }
@@ -173,9 +186,10 @@ block content
     const createOnce = () => {
       const searchInput = '<input type="text" id="searchInput" />';
       const searchButton = '<button class="btn btn-dark" style="margin-left: 5px;" id="searchButton">검색</button>';
+      const searchAddObj = document.getElementById('searchAdd');
 
-      $(".searchAdd").append(searchInput);
-      $(".searchAdd").append(searchButton);
+      searchAddObj.insertAdjacentHTML('beforeend',searchInput);
+      searchAddObj.insertAdjacentHTML('beforeend',searchButton);
     }
 
   p#title(style="margin-top:5%;") 장치 정보 수정

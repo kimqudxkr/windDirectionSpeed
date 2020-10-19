@@ -63,10 +63,10 @@ block content
     }
 
     //- 장치 위치 input 클릭 시 kakao map 띄우는 함수
-    let flag = true;
+    let flag = true;      //- 요소 중복 생성 방지 boolean
     const popUp = () => {
       const modal = document.getElementById('myModal');
-      const span = document.getElementsByClassName("close")[0];  
+      const span = document.getElementById("close");  
 
       //- 팝업창 띄움
       modal.style.display = "block";
@@ -83,7 +83,7 @@ block content
         }
       }
       
-      //- 현재 로텍엔지니어링 위도, 경도를 중앙으로 하는 지도 생성
+      //- 지도 생성
       const mapContainer = document.getElementById("map"),
         mapOption = {
           center: new kakao.maps.LatLng(35.504113, 129.305680),
@@ -115,12 +115,13 @@ block content
             //- 마우스 클릭 위치에 마커 표시
             displayMarker(marker, infowindow, map, mouseEvent.latLng, detailAddr);
 
+            //- 주소를 받은 후 텍스트 변경과 버튼을 띄우는 함수
             afterSelect(detailAddr);
           }
         });
       });
 
-      //- 주소 검색하여 지도 표시하기
+      //- 팝업창 내 요소들 중복 생성 방지
       if(flag) {
         createOnce();
         flag = false;
@@ -145,6 +146,7 @@ block content
                 //- 해당 주소를 지도 가운데로 설정
                 map.setCenter(coords);
 
+                //- 주소를 받은 후 텍스트 변경과 버튼을 띄우는 함수
                 afterSelect(detailAddr);
               }
             });
@@ -154,7 +156,6 @@ block content
 
       //- 주소를 받은 후 텍스트 변경과 버튼을 띄우는 함수
       const afterSelect = (param) => {
-        const registerButtonObj = document.getElementById('registerButton');
         const locationObj = document.getElementById('location');
         const modalNoticeObj = document.getElementById('modalNotice');
 
@@ -167,13 +168,6 @@ block content
         document.getElementById('confirmButton').addEventListener('click', function() {
           locationObj.value = param;
           modal.style.display = "none";
-
-          if(document.getElementById('notice').hasAttribute('style')
-             && locationObj.value != "") {      //- 속성의 유무로 판단
-            registerButtonObj.disabled = false;
-          } else {
-            registerButtonObj.disabled = true;
-          }
         });
       }
     }
@@ -189,12 +183,13 @@ block content
       infowindow.open(map, marker);
     }
 
-    //- modal pop up을 띄울때 태그 중복 생성을 방지하기 위한 함수
+    //- modal pop up을 띄울때 요소들 중복 생성을 방지하기 위한 함수
     const createOnce = () => {
       const searchInput = '<input type="text" id="searchInput" />';
       const searchButton = '<button class="btn btn-dark" style="margin-left: 5px;" id="searchButton">검색</button>';
       const searchAddObj = document.getElementById('searchAdd');
 
+      //- searchAdd 요소 뒤에 다른 요소들을 붙임
       searchAddObj.insertAdjacentHTML('beforeend',searchInput);
       searchAddObj.insertAdjacentHTML('beforeend',searchButton);
     }
@@ -229,7 +224,7 @@ block content
 
   div.modal#myModal
     div.modal-content
-      span.close &times;
+      span#close &times;
       p#modalNotice 아래 지도에서 위치를 선택하거나 주소로 검색하세요.
       div#searchAdd
       br

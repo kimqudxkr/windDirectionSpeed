@@ -113,7 +113,7 @@ block content
       const deviceTypeSelectObj = document.getElementById('deviceTypeSelect');
       const dateSettingObj = document.getElementById('dateSetting');
 
-      //- 필터 속 li 속성들을 전부 event listener 등록
+      //- 필터 속  모든 li 속성 요소들에 event listener 등록
       const list = document.querySelector('#filter').querySelectorAll('li');
       for(let i=0; i<list.length; i++) {
         list[i].addEventListener('click', function(e) {

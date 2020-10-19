@@ -198,7 +198,7 @@ block content
     tr
       th 장치 이름
       td
-        input(type='text' class='form-control' id='deviceId' disabled value=moduleInfo[0].deviceId)
+        input(type='text' class='form-control' id='deviceId' disabled value=moduleInfo[0].deviceId autocomplete="off")
     tr
       th 장치 유형
       td
@@ -209,11 +209,11 @@ block content
     tr
       th 장치 위치
       td
-        input(type='text' class='form-control' id='location' value=moduleInfo[0].location onclick="popUp()")
+        input(type='text' class='form-control' id='location' value=moduleInfo[0].location onclick="popUp()" autocomplete="off")
     tr
       th 등록 일자
       td 
-        input(type='text' class='form-control' id='dateInput' disabled value=moduleInfo[0].rgstDt)
+        input(type='text' class='form-control' id='dateInput' disabled value=moduleInfo[0].rgstDt autocomplete="off")
 
   br
   div

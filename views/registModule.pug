@@ -60,7 +60,7 @@ block content
                 noticeObj.textContent = "중복된 이름입니다.";
                 noticeObj.removeAttribute('style');    //- 속성의 유무로 버튼 작업을 위한 속성 해제 작업
                 registerButtonObj.disabled = true;
-              } else {         //- 비 중복 시
+              } else {                      //- 비 중복 시
                 noticeObj.textContent = "사용 가능한 이름입니다."
                 //- 속성의 유무로 버튼 작업을 위한 속성 설정 작업
                 noticeObj.setAttribute('style', "font-family: 'Do Hyeon', sans-serif; color: green;")
@@ -209,7 +209,7 @@ block content
     tr
       th 장치 이름
       td
-        input(type='text' class='form-control' id='deviceId' placeholder="Device Name")
+        input(type='text' class='form-control' id='deviceId' placeholder="Device Name" autocomplete="off")
     tr
       th 장치 유형
       td
@@ -220,11 +220,11 @@ block content
     tr
       th 장치 위치
       td
-        input(type='text' class='form-control' id='location' placeholder="여기를 클릭하세요" onclick="popUp()")
+        input(type='text' class='form-control' id='location' placeholder="여기를 클릭하세요" onclick="popUp()" autocomplete="off")
     tr
       th 등록 일자
       td 
-        input(type='text' class='form-control' id='dateInput' disabled)
+        input(type='text' class='form-control' id='dateInput' disabled autocomplete="off")
 
   p#notice 장치 이름을 입력해주세요.
 

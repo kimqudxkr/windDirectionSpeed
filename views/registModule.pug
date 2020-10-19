@@ -91,6 +91,13 @@ block content
         modal.style.display = "none";
       }
 
+      //- modal 창 밖을 클릭할 경우 팝업창 닫음
+      window.onclick = function(e) {
+        if(e.target == modal) {
+          modal.style.display = 'none';
+        }
+      }
+      
       //- 현재 로텍엔지니어링 위도, 경도를 중앙으로 하는 지도 생성
       const mapContainer = document.getElementById("map"),
         mapOption = {
@@ -189,7 +196,7 @@ block content
       marker.setMap(map);
 
       //- 인포윈도우 내용 설정
-      infowindow.setContent(`<div style="width: 150px; text-align: center; padding: 6px 0;">${address}</div>`);
+      infowindow.setContent(`<div style="width: 150%; text-align: left; margin-left: 2px; padding: 10px;">${address}</div>`);
       infowindow.open(map, marker);
     }
 
@@ -240,4 +247,5 @@ block content
       span.close &times;
       p#modalNotice 아래 지도에서 위치를 선택하거나 주소로 검색하세요.
       div#searchAdd
+      br
       div#map

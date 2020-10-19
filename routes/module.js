@@ -43,7 +43,7 @@ router.get('/api/moduleSearch', function(req, res, next) {
   const params = req.query;
 
   // 검색은 해당 글자를 포함하는 모든 데이터를 불러오기에 LIKE 사용(장치 이름, 위치, 일자 등)
-  const query = `SELECT * FROM modulelist WHERE ${params.column} LIKE '%${params.matching}%'`;
+  const query = `SELECT * FROM modulelist WHERE ${params.column} LIKE '%${params.matching}%' ORDER BY rgstDt`;
 
   connection.query(query,(err, rows, fields) => {
     if(!err) {

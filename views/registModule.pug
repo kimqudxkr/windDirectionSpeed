@@ -10,13 +10,13 @@ block content
     //- 등록 버튼을 눌렀을 때 장치 정보를 DB에 INSERT 요청 하는 함수
     const registerModule = () => {
       //- 장치 유형 정보를 받아옴
-      const deviceTypeOption = document.getElementById("deviceType");
-      const deviceType = deviceTypeOption.options[deviceTypeOption.selectedIndex].value;
+      const deviceTypeObj = document.getElementById("deviceType");
+      const deviceTypeVal = deviceTypeObj.options[deviceTypeObj.selectedIndex].value;
 
       $.ajax({
         data: {
           'deviceId': document.getElementById("deviceId").value,
-          'deviceType': deviceType,
+          'deviceType': deviceTypeVal,
           'location': document.getElementById("location").value
         },
         type: 'get',
@@ -36,15 +36,20 @@ block content
 
     //- 장치 등록 시 실시간 상호작용을 위한 구간
     $(function() {
+      const deviceIdObj = document.getElementById("deviceId");
+      const noticeObj = document.getElementById("notice");
+      const registerButtonObj = document.getElementById("registerButton");
+
       //- 장치 이름 중복을 확인하기 위한 작업
-      $("#deviceId").blur(function() {      //- deviceId input에서 포커스가 해제되는 순간
-        if($("#deviceId").val() == "") {
-          $("#notice").text("장치 이름을 입력해주세요.");
-          $("#notice").removeAttr('style');
+      deviceIdObj.addEventListener('blur', (function() {      //- deviceId input에서 포커스가 해제되는 순간
+        if(deviceIdObj.value == "") {
+          noticeObj.innerHTML = "장치 이름을 입력해주세요.";
+          noticeObj.removeAttribute('style');
+          registerButtonObj.disabled = true;
         } else {        //- 어떤 값이 입력이 된다면
           $.ajax({
             data: {
-              'deviceId': document.getElementById("deviceId").value
+              'deviceId': deviceIdObj.value
             },
             type: 'get',
             dataType : 'html',
@@ -52,15 +57,15 @@ block content
             contentType: 'application/json', 
             success: (success) => {
               if(success == "yes") {        //- 중복 시
-                $("#notice").text("중복된 이름입니다.");
-                $("#notice").removeAttr('style');     //- 속성의 유무로 버튼 작업을 위한 속성 해제 작업
-                $("#registerButton").attr('disabled', true);
+                noticeObj.innerHTML = "중복된 이름입니다.";
+                noticeObj.removeAttribute('style');    //- 속성의 유무로 버튼 작업을 위한 속성 해제 작업
+                registerButtonObj.disabled = true;
               } else {         //- 비 중복 시
-                $("#notice").text("사용 가능한 이름입니다.");
+                noticeObj.innerHTML = "사용 가능한 이름입니다."
                 //- 속성의 유무로 버튼 작업을 위한 속성 설정 작업
-                $("#notice").attr('style', "font-family: 'Do Hyeon', sans-serif; color: green;");   
-                if($("#location").val()!="") {
-                  $("#registerButton").attr('disabled', false);
+                noticeObj.setAttribute('style', "font-family: 'Do Hyeon', sans-serif; color: green;")
+                if(document.getElementById('location').value != "") {
+                  registerButtonObj.disabled = false;
                 }
               }
             },
@@ -69,16 +74,7 @@ block content
             }
           })
         }
-      })
-
-      //- 중복과 공백을 방지하기 위한 버튼 (비)활성화 작업
-      $("#location").keyup(function() {
-        if($("#notice").is('[style]') && ($("#location").val()!="")) {      //- 속성의 유무로 판단
-          $("#registerButton").attr('disabled', false);
-        } else {
-          $("#registerButton").attr('disabled', true);
-        }
-      });
+      }))
     })
 
     //- 장치 위치 input 클릭 시 kakao map 띄우는 함수
@@ -134,9 +130,10 @@ block content
       }
 
       //- input 창에 주소를 입력하고 만들어진 버튼을 클릭할 시
-      $("#searchButton").on('click', function() {
+      document.getElementById("searchButton").onclick = () => {
         //- 입력 받은 주소를 기준으로 위도, 경도 받아옴
-        geocoder.addressSearch($("#searchInput").val(), function(result, status) {
+        const inputValue = document.getElementById("searchInput").value;
+        geocoder.addressSearch(inputValue, function(result, status) {
           if(status === kakao.maps.services.Status.OK) {
             const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
@@ -157,19 +154,30 @@ block content
             });
           }
         })
-      })
+      }
 
       //- 주소를 받은 후 텍스트 변경과 버튼을 띄우는 함수
       const afterSelect = (param) => {
+        const registerButtonObj = document.getElementById('registerButton');
+        const locationObj = document.getElementById('location');
+        const modalNoticeObj = document.getElementById('modalNotice');
+
         //- 받아온 주소와 설정 버튼을 띄움
-        $("#myModal p").text(param);
+        modalNoticeObj.innerHTML = param;
         const confirm = '<button class="btn btn-dark" id="confirmButton" style="margin-left: 10px">설정</button>';
-        $("#myModal p").append(confirm);
+        modalNoticeObj.insertAdjacentHTML('beforeend', confirm);
 
         //- 설정버튼 클릭시 해당 주소가 장치 위치 input에 입력되며 팝업창 사라짐
-        $("#confirmButton").on("click", function() {
-          $("#location").val(param);
+        document.getElementById('confirmButton').addEventListener('click', function() {
+          locationObj.value = param;
           modal.style.display = "none";
+
+          if(document.getElementById('notice').hasAttribute('style')
+             && locationObj.value != "") {      //- 속성의 유무로 판단
+            registerButtonObj.disabled = false;
+          } else {
+            registerButtonObj.disabled = true;
+          }
         });
       }
     }
@@ -189,9 +197,10 @@ block content
     const createOnce = () => {
       const searchInput = '<input type="text" id="searchInput" />';
       const searchButton = '<button class="btn btn-dark" style="margin-left: 5px;" id="searchButton">검색</button>';
+      const searchAddObj = document.getElementById('searchAdd');
 
-      $(".searchAdd").append(searchInput);
-      $(".searchAdd").append(searchButton);
+      searchAddObj.insertAdjacentHTML('beforeend',searchInput);
+      searchAddObj.insertAdjacentHTML('beforeend',searchButton);
     }
     
   p#title(style="margin-top:5%;") 장치 등록
@@ -229,6 +238,6 @@ block content
   div.modal#myModal
     div.modal-content
       span.close &times;
-      p 아래 지도에서 위치를 선택하거나 주소로 검색하세요.
-      div.searchAdd
+      p#modalNotice 아래 지도에서 위치를 선택하거나 주소로 검색하세요.
+      div#searchAdd
       div#map

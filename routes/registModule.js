@@ -8,8 +8,9 @@ router.get('/', function(req, res, next) {
 });
 
 // 장치 등록 버튼 눌렀을 때
-router.get('/api/regist', function(req, res, next) {
-  const params = req.query;
+router.post('/api/regist', function(req, res, next) {
+  console.log(req.body);
+  const params = req.body;
   const query = `INSERT INTO modulelist(deviceId, deviceType, location) 
                  VALUES('${params.deviceId}', '${params.deviceType}', '${params.location}')`;
 

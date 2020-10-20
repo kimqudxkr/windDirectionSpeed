@@ -35,10 +35,10 @@ block content
     const deleteModule = (deviceId) => {
       if(confirm("삭제하시겠습니까?")) {
         $.ajax({
-          data: {
+          data: JSON.stringify({
             'deviceId': deviceId
-          },
-          type: 'get',
+          }),
+          type: 'post',
           dataType : 'html',
           url: "/module/api/delete", 
           contentType: 'application/json', 

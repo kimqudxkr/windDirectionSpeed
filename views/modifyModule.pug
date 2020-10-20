@@ -42,12 +42,12 @@ block content
       const deviceType = deviceTypeOption.options[deviceTypeOption.selectedIndex].value;
 
       $.ajax({
-        data: {
+        data: JSON.stringify({
           'deviceId': document.getElementById("deviceId").value,
           'deviceType': deviceType,
           'location': document.getElementById("location").value
-        },
-        type: 'get',
+        }),
+        type: 'post',
         dataType : 'html',
         url: "/modifyModule/api/modify", 
         contentType: 'application/json', 
@@ -66,7 +66,7 @@ block content
     let flag = true;      //- 요소 중복 생성 방지 boolean
     const popUp = () => {
       const modal = document.getElementById('myModal');
-      const span = document.getElementById("close");  
+      const span = document.getElementsByClassName("close")[0];
 
       //- 팝업창 띄움
       modal.style.display = "block";
@@ -224,7 +224,7 @@ block content
 
   div.modal#myModal
     div.modal-content
-      span#close &times;
+      span.close &times;
       p#modalNotice 아래 지도에서 위치를 선택하거나 주소로 검색하세요.
       div#searchAdd
       br

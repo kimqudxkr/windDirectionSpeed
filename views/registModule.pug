@@ -14,12 +14,12 @@ block content
       const deviceTypeVal = deviceTypeObj.options[deviceTypeObj.selectedIndex].value;
 
       $.ajax({
-        data: {
+        data: JSON.stringify({ 
           'deviceId': document.getElementById("deviceId").value,
           'deviceType': deviceTypeVal,
           'location': document.getElementById("location").value
-        },
-        type: 'get',
+        }),
+        type: 'post',
         dataType : 'html',
         url: "/registModule/api/regist", 
         contentType: 'application/json', 
@@ -31,7 +31,7 @@ block content
           alert('등록실패');
           console.log(err)
         }
-      })
+      });
     }
 
     //- 장치 등록 시 실시간 상호작용을 위한 구간

@@ -25,8 +25,8 @@ router.get('/', function(req, res, next) {
 });
 
 // 장치 삭제 버튼 눌렀을 때
-router.get('/api/delete', function(req, res, next) {
-  const deviceId = req.query.deviceId;
+router.post('/api/delete', function(req, res, next) {
+  const deviceId = req.body.deviceId;
   const query = `DELETE FROM modulelist WHERE deviceId = '${deviceId}'`;
 
   connection.query(query,(err, rows, fields) => {

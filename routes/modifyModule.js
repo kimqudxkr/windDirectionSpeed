@@ -27,8 +27,8 @@ router.get('/', function(req, res, next) {
 });
 
 // 수정 버튼을 눌렀을 때
-router.get('/api/modify', function(req, res, next) {
-  const params = req.query;
+router.post('/api/modify', function(req, res, next) {
+  const params = req.body;
   const query = `UPDATE moduleList SET deviceType='${params.deviceType}', location='${params.location}'
                  WHERE deviceId = '${params.deviceId}'`;
 

@@ -104,6 +104,7 @@ block content
       geocoder.addressSearch(locationVal, function(result, status) {
         defaultCoords = new kakao.maps.LatLng(result[0].y, result[0].x);
         displayMarker(marker, infowindow, map, defaultCoords, locationVal);
+        map.setCenter(new kakao.maps.LatLng(result[0].y, result[0].x));       //- 해당 위도 경도를 중심으로 지도 표시
       });
 
       //- 지도 화면 클릭시 이벤트리스너

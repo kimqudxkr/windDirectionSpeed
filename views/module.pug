@@ -2,7 +2,8 @@ extends layout
 
 block content
   link(rel='stylesheet', href='/stylesheets/module.css')
- 
+  include secret
+
   script.
     document.getElementById("module").className="current";
     
@@ -159,59 +160,132 @@ block content
       }
     }
 
-  p#title(style="margin-top:2%;") 장치 목록 
+    //- 테이블을 숨기고 kakao map을 보여주는 함수
+    const showMap = () => {
+      document.getElementById('tableDiv').style.display = 'none';
+      document.getElementById('mapDiv').style.display = 'block';
+      document.getElementById('mapButton').hidden = true;
+      document.getElementById('tableButton').hidden = false;
 
-  div.container 
-    div.row
-      div.col-6.offset-3
-        div.input-group
-          div.input-group-btn.search-panel
-            div.dropdown
-              button.btn.btn-btn-default.dropdown-toggle(type="button" data-toggle="dropdown")
-                span#searchConcept Filter by
-                span#caret
-              ul.dropdown-menu#filter
-                li.dropdown-item#deviceId 장치이름
-                li.dropdown-divider
-                li.dropdown-item#deviceType 장치유형
-                li.dropdown-divider
-                li.dropdown-item#location 장치위치
-                li.dropdown-divider
-                li.dropdown-item#rgstDt 등록일자
-          
-          input#searchParam(type="hidden" autocomplete="off")
-          input.form-control#notice(type="text" value="왼쪽 필터를 설정해주세요." disabled)
-          input.form-control#deviceIdInput(type="text" placeholder="장치 이름을 입력하세요." autocomplete="off" style='display: none;')
-          input.form-control#locationInput(type="text" placeholder="장치 위치를 입력하세요." autocomplete="off" style='display: none;')
-          select#deviceTypeInput(style="width: 370px; text-align-last: center; display: none")
-            option(value='풍향/풍속') 풍향/풍속
-            option(value='온도/습도') 온도/습도
-            option(value='미세먼지') 미세먼지
-          input#rgstDtInput(type="input" style="width: 370px; text-align:center; display: none" autocomplete="off")
-          button.btn.btn-dark#searchButton(type="button" onClick="searchModule()" disabled) search
+      const mapContainer = mapDiv,
+            mapOption = {
+              center: new kakao.maps.LatLng(35.504113, 129.305680),
+              level: 8
+            }
+
+      const map = new kakao.maps.Map(mapContainer, mapOption);
+
+      let deviceId = [];
+      let location = [];
+      let latlng = [];
+
+      $.ajax({
+        type: 'get',
+        dataType : 'json',
+        url: "/module/api/showMap", 
+        contentType: 'application/json', 
+        success: (result) => {
+          for(let i=0; i<result.length; i++) {
+            deviceId.push(result[i].deviceId);
+            location.push(result[i].location);
+          }
+
+          const geocoder = new kakao.maps.services.Geocoder();
+
+          for(let i=0; i<location.length; i++) {
+            geocoder.addressSearch(location[i], function(result, status) {
+              if(status === kakao.maps.services.Status.OK) {
+                const marker = new kakao.maps.Marker({
+                  position: new kakao.maps.LatLng(result[0].y, result[0].x)
+                });
+
+                marker.setMap(map);
+                const infowindow = new kakao.maps.InfoWindow({zindex:1});
+                infowindow.setContent(`<div style="width: 150%; text-align: left; margin-left: 2px; padding: 10px;">${location[i]}</div>`);
+                infowindow.open(map, marker);
+              }
+            });
             
+          }
+
+        },
+        error: (err) => {
+          console.log(err)
+        }
+      });
+      
+      //- for(let i=0; i<deviceId.length; i++) {
+      //-   const marker = new kakao.maps.Marker({})
+      //- }
+    }
+    
+    //- kakao map을 숨기고 테이블을 보여주는 함수
+    const showTable = () => {
+      document.getElementById('tableDiv').style.display = 'block';
+      document.getElementById('mapDiv').style.display = 'none';
+      document.getElementById('mapButton').hidden = false;
+      document.getElementById('tableButton').hidden = true;
+    }
+
+  p#title(style="margin-top:2%;") 장치 목록 
+  div#tableDiv
+    div.container 
+      div.row
+        div.col-6.offset-3
+          div.input-group
+            div.input-group-btn.search-panel
+              div.dropdown
+                button.btn.btn-btn-default.dropdown-toggle(type="button" data-toggle="dropdown")
+                  span#searchConcept Filter by
+                  span#caret
+                ul.dropdown-menu#filter
+                  li.dropdown-item#deviceId 장치이름
+                  li.dropdown-divider
+                  li.dropdown-item#deviceType 장치유형
+                  li.dropdown-divider
+                  li.dropdown-item#location 장치위치
+                  li.dropdown-divider
+                  li.dropdown-item#rgstDt 등록일자
+            
+            input#searchParam(type="hidden" autocomplete="off")
+            input.form-control#notice(type="text" value="왼쪽 필터를 설정해주세요." disabled)
+            input.form-control#deviceIdInput(type="text" placeholder="장치 이름을 입력하세요." autocomplete="off" style='display: none;')
+            input.form-control#locationInput(type="text" placeholder="장치 위치를 입력하세요." autocomplete="off" style='display: none;')
+            select#deviceTypeInput(style="width: 370px; text-align-last: center; display: none")
+              option(value='풍향/풍속') 풍향/풍속
+              option(value='온도/습도') 온도/습도
+              option(value='미세먼지') 미세먼지
+            input#rgstDtInput(type="input" style="width: 370px; text-align:center; display: none" autocomplete="off")
+            button.btn.btn-dark#searchButton(type="button" onClick="searchModule()" disabled) search
+              
+    br
+    table#listTable(border='1')
+      thead
+        tr
+          th 장치 이름
+          th 장치 유형
+          th 장치 위치
+          th 등록 일자
+          th 수정
+          th 삭제
+      tbody
+      each list in moduleList
+        tr
+          td #{list.deviceId}
+          td #{list.deviceType}
+          td #{list.location}
+          td #{list.rgstDt}
+          td
+            button.btn.btn-dark.form-control(onClick=`location.href='/modifyModule?deviceId=${list.deviceId}'`) 수정
+          td
+            button.btn.btn-dark.form-control(onClick=`deleteModule('${list.deviceId}')`) 삭제
+    br
+    ul(class='pagination')
+
+  div#mapDiv(style="display: none; width:1000px; height: 425px; margin: 0 auto;")
   br
-  table#listTable(border='1')
-    thead
-      tr
-        th 장치 이름
-        th 장치 유형
-        th 장치 위치
-        th 등록 일자
-        th 수정
-        th 삭제
-    tbody
-     each list in moduleList
-      tr
-        td #{list.deviceId}
-        td #{list.deviceType}
-        td #{list.location}
-        td #{list.rgstDt}
-        td
-          button.btn.btn-dark.form-control(onClick=`location.href='/modifyModule?deviceId=${list.deviceId}'`) 수정
-        td
-          button.btn.btn-dark.form-control(onClick=`deleteModule('${list.deviceId}')`) 삭제
-  br
-  ul(class='pagination')
+
   div
-    button.btn.btn-dark(onclick="location.href='/registModule'") 새 장치 등록
+    button.btn.btn-dark(onclick="location.href='/registModule'" style='margin-right: 5px;') 새 장치 등록
+    button.btn.btn-dark#mapButton(onclick="showMap()" style='margin-left: 5px;') 지도로 보기
+    button.btn.btn-dark#tableButton(onclick="showTable()" style='margin-left: 5px;' hidden) 표로 보기

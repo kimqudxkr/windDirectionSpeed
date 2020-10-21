@@ -42,11 +42,7 @@ block content
 
       //- 장치 이름 중복을 확인하기 위한 작업
       deviceIdObj.addEventListener('blur', (function() {      //- deviceId input에서 포커스가 해제되는 순간
-        if(deviceIdObj.value == "") {
-          noticeObj.textContent = "장치 이름을 입력해주세요.";
-          noticeObj.removeAttribute('style');
-          registerButtonObj.disabled = true;
-        } else {        //- 어떤 값이 입력이 된다면
+        if(deviceIdObj.value !== "") {        
           $.ajax({
             data: {
               'deviceId': deviceIdObj.value
@@ -70,11 +66,15 @@ block content
               }
             },
             error: (err) => {
-              console.log(err)
+              console.log(err);
             }
-          })
-        }
-      }))
+          });
+        } else {
+          noticeObj.textContent = "장치 이름을 입력해주세요.";
+          noticeObj.removeAttribute('style');
+          registerButtonObj.disabled = true;
+        } 
+      }));
     })
 
     //- 장치 위치 input 클릭 시 kakao map 띄우는 함수

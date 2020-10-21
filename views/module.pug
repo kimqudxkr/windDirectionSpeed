@@ -115,27 +115,26 @@ block content
           document.getElementById('searchConcept').textContent = this.textContent;
           document.getElementById('searchParam').value = this.getAttribute("id");
 
+          document.getElementById('notice').setAttribute('style', 'display: none;');
+
           //- 필터에서 선택된 값에 따라 보여주는 검색창을 다르게 함
           document.getElementById('deviceIdInput').style.display = 'none';
           document.getElementById('deviceTypeInput').style.display = 'none';
           document.getElementById('locationInput').style.display = 'none';
           document.getElementById('rgstDtInput').style.display = 'none';
           document.getElementById(this.getAttribute("id")+'Input').style.display = 'block';
+
+          document.getElementById('searchButton').disabled = false;
         })
       }
     }
-    
+
     //- 검색 버튼을 눌렀을 때 작동하는 함수
     const searchModule = () => {
       const column = document.getElementById('searchParam').value;      //- 검색할 콜럼 저장
       const matching = document.getElementById(column+'Input').value;   //- 검색할 값 저장
 
-      //- 검색을 시작
-      if(column === "") {
-        alert("필터를 설정해 주세요.");
-      } else if(matching === "") {
-        alert("검색어를 입력해 주세요.")
-      } else {
+      if(matching !== '') {
         $.ajax({
           data: {
             'column': column,
@@ -155,6 +154,8 @@ block content
             console.log(err)
           }
         })
+      } else {
+        alert("검색어를 입력해주세요.");
       }
     }
 
@@ -179,14 +180,15 @@ block content
                 li.dropdown-item#rgstDt 등록일자
           
           input#searchParam(type="hidden" name="serch-param" autocomplete="off")
-          input.form-control#deviceIdInput(type="text" placeholder="장치 이름을 입력하세요." autocomplete="off")
+          input.form-control#notice(type="text" value="왼쪽 필터를 설정해주세요." disabled)
+          input.form-control#deviceIdInput(type="text" placeholder="장치 이름을 입력하세요." autocomplete="off" style='display: none;')
           input.form-control#locationInput(type="text" placeholder="장치 위치를 입력하세요." autocomplete="off" style='display: none;')
           select#deviceTypeInput(style="width: 370px; text-align-last: center; display: none")
             option(value='풍향/풍속') 풍향/풍속
             option(value='온도/습도') 온도/습도
             option(value='미세먼지') 미세먼지
           input#rgstDtInput(type="input" style="width: 370px; text-align:center; display: none" autocomplete="off")
-          button.btn.btn-dark(type="button" onClick="searchModule()") search
+          button.btn.btn-dark#searchButton(type="button" onClick="searchModule()" disabled) search
             
   br
   table#listTable(border='1')

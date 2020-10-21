@@ -222,22 +222,22 @@ block content
     tr
       th 장치 이름
       td
-        input(type='text' class='form-control' id='deviceId' placeholder="Device Name" autocomplete="off")
+        input.form-control#deviceId(type='text' placeholder="Device Name" autocomplete="off")
     tr
       th 장치 유형
       td
-        select(id='deviceType' class='form-control')
+        select.form-control#deviceType
           option(value='풍향/풍속') 풍향/풍속
           option(value='온도/습도') 온도/습도
           option(value='미세먼지') 미세먼지
     tr
       th 장치 위치
       td
-        input(type='text' class='form-control' id='location' placeholder="여기를 클릭하세요" onclick="popUp()" autocomplete="off")
+        input.form-control#location(type='text' placeholder="여기를 클릭하세요" onclick="popUp()" autocomplete="off")
     tr
       th 등록 일자
       td 
-        input(type='text' class='form-control' id='dateInput' disabled autocomplete="off")
+        input.form-control#dateInput(type='text' disabled autocomplete="off")
 
   p#notice 장치 이름을 입력해주세요.
 
@@ -245,7 +245,7 @@ block content
     document.getElementById('dateInput').value = moment().format('YYYY-MM-DD');
 
   div
-    button.btn.btn-dark(onclick="registerModule()" style='margin-right: 5px;' disabled id="registerButton") 등록
+    button.btn.btn-dark#registerButton(onclick="registerModule()" style='margin-right: 5px;' disabled) 등록
     button.btn.btn-dark(onclick="location.href='/module'" style='margin-left: 5px;') 취소
 
   div.modal#myModal

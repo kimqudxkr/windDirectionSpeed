@@ -105,7 +105,7 @@ block content
         defaultCoords = new kakao.maps.LatLng(result[0].y, result[0].x);
         displayMarker(marker, infowindow, map, defaultCoords, locationVal);
       });
-      
+
       //- 지도 화면 클릭시 이벤트리스너
       kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
         //- 마우스 클릭한 곳의 위도와 경도를 읽어와 도로명주소로 변환
@@ -202,22 +202,22 @@ block content
     tr
       th 장치 이름
       td
-        input(type='text' class='form-control' id='deviceId' disabled value=moduleInfo[0].deviceId autocomplete="off")
+        input.form-control#deviceId(type='text' disabled value=moduleInfo[0].deviceId autocomplete="off")
     tr
       th 장치 유형
       td
-        select(id='deviceType' class='form-control')
+        select.form-control#deviceType
           option(value='풍향/풍속') 풍향/풍속
           option(value='온도/습도') 온도/습도
           option(value='미세먼지') 미세먼지
     tr
       th 장치 위치
       td
-        input(type='text' class='form-control' id='location' value=moduleInfo[0].location onclick="popUp()" autocomplete="off")
+        input.form-control#location(type='text' value=moduleInfo[0].location onclick="popUp()" autocomplete="off")
     tr
       th 등록 일자
       td 
-        input(type='text' class='form-control' id='dateInput' disabled value=moduleInfo[0].rgstDt autocomplete="off")
+        input.form-control#dateInput(type='text' disabled value=moduleInfo[0].rgstDt autocomplete="off")
 
   br
   div

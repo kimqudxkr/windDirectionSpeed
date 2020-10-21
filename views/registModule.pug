@@ -98,6 +98,8 @@ block content
         }
       }
 
+      document.getElementById('modalNotice').textContent = '아래 지도에서 위치를 선택하거나 주소로 검색하세요.';
+
       //- 현재 로텍엔지니어링 위도, 경도를 중앙으로 하는 지도 생성
       const mapContainer = document.getElementById("map"),
         mapOption = {
@@ -249,7 +251,7 @@ block content
   div.modal#myModal
     div.modal-content
       span.close &times;
-      p#modalNotice 아래 지도에서 위치를 선택하거나 주소로 검색하세요.
+      p#modalNotice
       div#searchAdd
       br
       div#map

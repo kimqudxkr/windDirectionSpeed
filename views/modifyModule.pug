@@ -82,6 +82,8 @@ block content
           modal.style.display = 'none';
         }
       }
+
+      document.getElementById('modalNotice').textContent = document.getElementById('location').value;
       
       //- 지도 생성
       const mapContainer = document.getElementById("map"),
@@ -103,7 +105,7 @@ block content
         defaultCoords = new kakao.maps.LatLng(result[0].y, result[0].x);
         displayMarker(marker, infowindow, map, defaultCoords, locationVal);
       });
-
+      
       //- 지도 화면 클릭시 이벤트리스너
       kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
         //- 마우스 클릭한 곳의 위도와 경도를 읽어와 도로명주소로 변환
@@ -225,7 +227,7 @@ block content
   div.modal#myModal
     div.modal-content
       span.close &times;
-      p#modalNotice 아래 지도에서 위치를 선택하거나 주소로 검색하세요.
+      p#modalNotice 
       div#searchAdd
       br
       div#map

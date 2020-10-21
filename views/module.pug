@@ -167,24 +167,27 @@ block content
       document.getElementById('mapButton').hidden = true;
       document.getElementById('tableButton').hidden = false;
 
+      //- map 객체 기본 설정
       const mapContainer = mapDiv,
             mapOption = {
               center: new kakao.maps.LatLng(35.504113, 129.305680),
               level: 8
             }
-
+      //- map 객체 생성
       const map = new kakao.maps.Map(mapContainer, mapOption);
 
+      //- 마커와 인포윈도우를 위한 배열
       let deviceId = [];
       let location = [];
-      let latlng = [];
 
+      //- DB에서 deviceId와 location 정보를 받아옴
       $.ajax({
         type: 'get',
         dataType : 'json',
         url: "/module/api/showMap", 
         contentType: 'application/json', 
         success: (result) => {
+          //- 배열에 복사
           for(let i=0; i<result.length; i++) {
             deviceId.push(result[i].deviceId);
             location.push(result[i].location);
@@ -195,28 +198,24 @@ block content
           for(let i=0; i<location.length; i++) {
             geocoder.addressSearch(location[i], function(result, status) {
               if(status === kakao.maps.services.Status.OK) {
+                //- DB속 location의 주소로 위도, 경도를 받아와 마커 생성
                 const marker = new kakao.maps.Marker({
                   position: new kakao.maps.LatLng(result[0].y, result[0].x)
                 });
-
                 marker.setMap(map);
+
+                //- DB속 location의 주소를 표시하는 인포윈도우 생성
                 const infowindow = new kakao.maps.InfoWindow({zindex:1});
                 infowindow.setContent(`<div style="width: 150%; text-align: left; margin-left: 2px; padding: 10px;">${location[i]}</div>`);
                 infowindow.open(map, marker);
               }
             });
-            
           }
-
         },
         error: (err) => {
           console.log(err)
         }
       });
-      
-      //- for(let i=0; i<deviceId.length; i++) {
-      //-   const marker = new kakao.maps.Marker({})
-      //- }
     }
     
     //- kakao map을 숨기고 테이블을 보여주는 함수

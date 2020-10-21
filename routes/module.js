@@ -50,7 +50,7 @@ router.get('/api/moduleSearch', function(req, res, next) {
       let result;   //SQL 결과를 html구문으로 반복하기 위한 함수
 
       // 만약 데이터가 없다면 No Data로 표시
-      if(JSON.stringify(rows)=='[]') {
+      if(!rows.length) {
         result = `
         <tr>
           <td colspan="6">No Data</td>

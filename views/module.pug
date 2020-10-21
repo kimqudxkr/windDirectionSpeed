@@ -58,7 +58,7 @@ block content
       let pagesNum = 0;
 
       //- 총 만들 페이지 갯수 계산
-      if(totalRowNum % rowNum == 0) {
+      if(totalRowNum % rowNum === 0) {
         pagesNum = totalRowNum / rowNum;
       }
       else if(totalRowNum % rowNum > 0) {

@@ -25,7 +25,7 @@ block content
 
           //- select의 option들 중 DB와 값이 일치하는 것이 선택되도록 설정
           for(let i=0; i<len; i++) {
-            if(selectType.options[i].value == type) {
+            if(selectType.options[i].value === type) {
               selectType.options[i].selected = "selected";
             }
           }
@@ -78,7 +78,7 @@ block content
 
       //- modal 창 밖을 클릭할 경우 팝업창 닫음
       window.onclick = function(e) {
-        if(e.target == modal) {
+        if(e.target === modal) {
           modal.style.display = 'none';
         }
       }

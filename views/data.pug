@@ -136,12 +136,12 @@ block content
         endHourObj.disabled = false;
       }
 
-      if(e.value == 'year') 
+      if(e.value === 'year') 
         yearTermObj.style.display = "inline";
       else 
         yearTermObj.style.display = "none";
       
-      if(e.value == 'quater') {
+      if(e.value === 'quater') {
         yearTermObj.style.display = "inline";
         quaterTermObj.style.display = "inline";
       } 
@@ -149,7 +149,7 @@ block content
         quaterTermObj.style.display = "none";
       }
 
-      if(e.value == 'month') {
+      if(e.value === 'month') {
         yearTermObj.style.display = "inline";
         monthTermObj.style.display = "inline";
       } 
@@ -157,7 +157,7 @@ block content
         monthTermObj.style.display = "none";
       }
 
-      if(e.value == 'week') {
+      if(e.value === 'week') {
         yearTermObj.style.display = "inline";
         monthTermObj.style.display = "inline";
         weekTermObj.style.display = "inline";
@@ -174,7 +174,7 @@ block content
       let pagesNum = 0;
 
       //- 총 만들 페이지 갯수 계산
-      if(totalRowNum % rowNum == 0) {
+      if(totalRowNum % rowNum === 0) {
         pagesNum = totalRowNum / rowNum;
       }
       else if(totalRowNum % rowNum > 0) {

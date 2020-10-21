@@ -18,15 +18,11 @@ block content
         changeMonth: true,
         changeYear: true,
       });
-      $("#dateSetting").datepicker().val(moment().format('YYYY-MM-DD'));
+      $("#rgstDtInput").datepicker().val(moment().format('YYYY-MM-DD'));
 
       //- 페이지네이션 동작
       pagination();
       jQuery('.pagination li:first-child').addClass("disabled");
-
-      //- 필터 선택에 따라 작동하기 위해 select와 datepicker는 숨김
-      document.getElementById('deviceTypeSelect').style.display = 'none';
-      document.getElementById('dateSetting').style.display = 'none';
 
       searchFilter();
     });
@@ -109,56 +105,35 @@ block content
     
     //- 검색창의 왼쪽 필터 작동 함수
     const searchFilter = () => {
-      const inputFormObj = document.getElementById('inputForm');
-      const deviceTypeSelectObj = document.getElementById('deviceTypeSelect');
-      const dateSettingObj = document.getElementById('dateSetting');
-
       //- 필터 속  모든 li 속성 요소들에 event listener 등록
       const list = document.querySelector('#filter').querySelectorAll('li');
       for(let i=0; i<list.length; i++) {
         list[i].addEventListener('click', function(e) {
           e.preventDefault();
-          let param = this.getAttribute("id");
-          let concept = this.textContent;
 
           //- 선택한 필터는 hidden input인 searchParam의 value가 됨
-          document.getElementById('searchConcept').textContent = concept;
-          document.getElementById('searchParam').value = param;
+          document.getElementById('searchConcept').textContent = this.textContent;
+          document.getElementById('searchParam').value = this.getAttribute("id");
 
-          //- 필터 선택에 따라 input/select/datepicker로 구분
-          if(this.textContent == "장치유형") {
-            inputFormObj.style.display = 'none';
-            deviceTypeSelectObj.style.display = 'block';
-            dateSettingObj.style.display = 'none';
-          } else if(this.textContent == "등록일자") {
-            inputFormObj.style.display = 'none';
-            deviceTypeSelectObj.style.display = 'none';
-            dateSettingObj.style.display = 'block';
-          } else {
-            inputFormObj.style.display = 'block';
-            deviceTypeSelectObj.style.display = 'none';
-            dateSettingObj.style.display = 'none';
-          }
+          //- 필터에서 선택된 값에 따라 보여주는 검색창을 다르게 함
+          document.getElementById('deviceIdInput').style.display = 'none';
+          document.getElementById('deviceTypeInput').style.display = 'none';
+          document.getElementById('locationInput').style.display = 'none';
+          document.getElementById('rgstDtInput').style.display = 'none';
+          document.getElementById(this.getAttribute("id")+'Input').style.display = 'block';
         })
       }
     }
     
     //- 검색 버튼을 눌렀을 때 작동하는 함수
     const searchModule = () => {
-      const column = document.getElementById('searchParam').value;    //- 검색할 콜럼 저장
-      let matching;   //- 검색할 값 저장
-
-      //- 필터 선택에 따라 matching에 저장될 값이 달라짐
-      switch(column) { 
-        case "deviceType" : matching = document.getElementById('deviceTypeSelect').value; break;
-        case "rgstDt" : matching = document.getElementById('dateSetting').value; break;
-        default : matching = document.getElementById('inputForm').value; break;
-      }
+      const column = document.getElementById('searchParam').value;      //- 검색할 콜럼 저장
+      const matching = document.getElementById(column+'Input').value;   //- 검색할 값 저장
 
       //- 검색을 시작
-      if(column=="") {
+      if(column === "") {
         alert("필터를 설정해 주세요.");
-      } else if(matching=="") {
+      } else if(matching === "") {
         alert("검색어를 입력해 주세요.")
       } else {
         $.ajax({
@@ -204,12 +179,13 @@ block content
                 li.dropdown-item#rgstDt 등록일자
           
           input#searchParam(type="hidden" name="serch-param" autocomplete="off")
-          input.form-control#inputForm(type="text" placeholder="검색 내용을 입력하세요." autocomplete="off")
-          select#deviceTypeSelect(style="width: 370px; text-align-last: center")
+          input.form-control#deviceIdInput(type="text" placeholder="장치 이름을 입력하세요." autocomplete="off")
+          input.form-control#locationInput(type="text" placeholder="장치 위치를 입력하세요." autocomplete="off" style='display: none;')
+          select#deviceTypeInput(style="width: 370px; text-align-last: center; display: none")
             option(value='풍향/풍속') 풍향/풍속
             option(value='온도/습도') 온도/습도
             option(value='미세먼지') 미세먼지
-          input#dateSetting(type="input" style="width: 370px; text-align:center" autocomplete="off")
+          input#rgstDtInput(type="input" style="width: 370px; text-align:center; display: none" autocomplete="off")
           button.btn.btn-dark(type="button" onClick="searchModule()") search
             
   br

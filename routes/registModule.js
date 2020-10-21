@@ -30,11 +30,8 @@ router.get('/api/checkId', function(req, res, next) {
 
   connection.query(query,(err, rows, fields) => {
     if(!err) {
-      if(JSON.stringify(rows)=='[]') {
-        res.send("no");
-      } else {
-        res.send("yes");
-      }
+      // res.send() 파라미터에는 Object, String, Array, Buffer Object 만 사용 가능
+      res.send(rows);
     } else {
       res.send(err);
     }

@@ -52,11 +52,11 @@ block content
               'deviceId': deviceIdObj.value
             },
             type: 'get',
-            dataType : 'html',
+            dataType : 'json',      //- 결과를 객체로 받음
             url: "/registModule/api/checkId", 
             contentType: 'application/json', 
             success: (success) => {
-              if(success == "yes") {        //- 중복 시
+              if(success.length) {        //- 중복 시
                 noticeObj.textContent = "중복된 이름입니다.";
                 noticeObj.removeAttribute('style');    //- 속성의 유무로 버튼 작업을 위한 속성 해제 작업
                 registerButtonObj.disabled = true;

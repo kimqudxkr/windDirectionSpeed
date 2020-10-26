@@ -179,7 +179,7 @@ block content
       //- 마커와 인포윈도우를 위한 배열
       let deviceId = [];
       let location = [];
-      let markers = [];
+      let markersInfo = [];
       let cnt = 0;
 
       //- DB에서 deviceId와 location 정보를 받아옴
@@ -195,81 +195,100 @@ block content
             location.push(result[i].location);
           }
 
+          //- 위도 경도가 비슷한 애들끼리 모인 배열
+          let group = [];
+
           const geocoder = new kakao.maps.services.Geocoder();
+          let marker;
+          
           for(let i=0; i<location.length; i++) {
             geocoder.addressSearch(location[i], function(result, status) {
-              let now = location[i];
               if(status === kakao.maps.services.Status.OK) {
                 //- DB속 location의 주소로 위도, 경도를 받아와 마커 생성
-                const marker = new kakao.maps.Marker({
-                  position: new kakao.maps.LatLng(result[0].y, result[0].x)
+                marker = new kakao.maps.Marker({
+                  position: new kakao.maps.LatLng(result[0].y, result[0].x),
+                  clickable: true,          
                 });
                 marker.setMap(map);
-                
+
                 //- 소수점 3자리 까지만 표시
                 const fineX = ((result[0].x)*1).toFixed(3);
                 const fineY = ((result[0].y)*1).toFixed(3);
 
-                //- 위도와 경도, 주소를 가지는 임시 객체 생성하여 markers에 push
+                //- 위도와 경도, 주소를 가지는 임시 객체 생성하여 markersInfo에 push
                 const obj = {
                   y: fineY,
                   x: fineX,
-                  location: now
+                  location: location[i],
+                  marker: marker
                 };
-                markers[i] = obj;
-
-                //- DB속 location의 주소를 표시하는 인포윈도우 생성
-                const infowindow = new kakao.maps.InfoWindow({zindex:1});
-                infowindow.setContent(`<div style="width: 150%; text-align: left; margin-left: 2px; padding: 10px;">${location[i]}</div>`);
-                infowindow.open(map, marker);
-
-                //- 마커에 마우스 올리면 zindex 변경하여 보기에 더 앞에 보이도록 함
-                kakao.maps.event.addListener(marker, 'mouseover', function() {
-                  infowindow.setZIndex(3);
-                  marker.setZIndex(3);
-                })
-
-                kakao.maps.event.addListener(marker, 'mouseout', function() {
-                  infowindow.setZIndex(1);
-                  marker.setZIndex(1);
-                })
+                markersInfo.push(obj);
               }
 
               cnt++;
               //- 동기를 위해 cnt 변수를 이용하여 데이터 갯수만큼 다 반복을 마쳐야 작동하도록 함
               if(cnt === (location.length)) {
                 //- 경도를 기준으로 정렬
-                markers.sort(function(i, j) {
+                markersInfo.sort(function(i, j) {
                   return (i.y < j.y ? -1 : i.y > i.x ? 1 : 0);
                 });
+                console.log(markersInfo);
 
                 //- 위치가 비슷한 애들끼리 모은 배열을 생성하고 최종 결과를 group 배열에 push
                 let tmpCnt = 0;
-                let group = [];
                 let tmp = [];
 
-                for(let i=0; i<markers.length; i++) {
-                  //- 임시배열이 비어있으면 현재 markers 값을 push
+                for(let i=0; i<markersInfo.length; i++) {
+                  //- 임시배열이 비어있으면 현재 markersInfo 값을 push
                   if(tmpCnt == 0) {
-                    tmp.push(markers[i]);
-                  }
-                  //- 임시배열에 값이 있다면 해당 값과 다음 markers의 값과 비교하여 일정 범위 내 이면 임시배열에 추가
-                  if(Math.abs(tmp[tmpCnt].x-markers[i].x) < 0.01 && Math.abs(tmp[tmpCnt].y-markers[i].y) < 0.03) {
-                    tmp.push(markers[i]);
+                    tmp.push(markersInfo[i]);
                     tmpCnt++;
-                  } else {    //- 일정 범위 밖에 해당한다면 i에 1을 빼서 다시 되돌리고 임시배열 내용을 group 배열에 push
-                    i--;
-                    tmp.shift();
-                    group.push(tmp);
-                    tmpCnt=0;
-                    tmp=[];
+                    //- 만약 마지막 데이터이면 바로 group에 push
+                    if(i === markersInfo.length-1) {
+                      group.push(tmp);
+                    }
+                  } else {
+                    //- 임시배열에 값이 있다면 해당 값과 다음 markersInfo의 값과 비교하여 일정 범위 내 이면 임시배열에 추가
+                    if(Math.abs(tmp[tmpCnt-1].x-markersInfo[i].x) < 0.01 && Math.abs(tmp[tmpCnt-1].y-markersInfo[i].y) < 0.03) {
+                      tmp.push(markersInfo[i]);
+                      tmpCnt++;
+                    } else {    
+                      //- 일정 범위 밖에 해당한다면 i에 1을 빼서 다시 되돌리고 임시배열 내용을 group 배열에 push
+                      i--;
+                      group.push(tmp);
+                      tmpCnt=0;
+                      tmp=[];
+                    }
                   }
                 }
-                console.log("===result===");
-                console.log(group);
               }
             });
           }
+          
+          //- 여기가 for 바깥
+          setTimeout(function() {
+            group.forEach(function(element) {
+              //- DB속 location의 주소를 표시하는 인포윈도우 생성
+              const infowindow = new kakao.maps.InfoWindow({zindex:1, removable: true});
+              infowindow.setPosition(new kakao.maps.LatLng(element[0].x, element[0].y));
+
+              let div = `<div style="height: 20px; border-bottom: 1px solid black;"></div>`;
+              element.forEach(function(eElement) {
+                div += `<div style="width: 101%; text-align: left; margin-left: 2px; padding: 5px;">${eElement.location}</div>`;
+                kakao.maps.event.addListener(eElement.marker, 'click', function() {
+                  //- 마커 클릭 시 infowindow가 map에 존재한다면 없애고, 존재하지 않는다면 infowindow를 띄움
+                  if(infowindow.getMap()) {
+                    infowindow.close();
+                  } else {
+                    infowindow.open(map, this);
+                  }
+                });
+              });
+              //- 처음에는 모든 infowindow를 띄움
+              infowindow.setContent(div);
+              infowindow.open(map, element[0].marker);
+            });
+          }, 400);
         },
         error: (err) => {
           console.log(err)

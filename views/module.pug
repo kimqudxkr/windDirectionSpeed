@@ -146,7 +146,6 @@ block content
           url: "/module/api/moduleSearch", 
           contentType: 'application/json', 
           success: (result) => {
-            console.log(result);
             $("#listTable > tbody").html(result);
             jQuery('.pagination *').remove();
             pagination();
@@ -177,7 +176,6 @@ block content
       const map = new kakao.maps.Map(mapContainer, mapOption);
 
       //- 마커와 인포윈도우를 위한 배열
-      let deviceId = [];
       let location = [];
       let markersInfo = [];
       let cnt = 0;
@@ -191,7 +189,6 @@ block content
         success: (result) => {
           //- 배열에 복사
           for(let i=0; i<result.length; i++) {
-            deviceId.push(result[i].deviceId);
             location.push(result[i].location);
           }
 
@@ -199,13 +196,12 @@ block content
           let group = [];
 
           const geocoder = new kakao.maps.services.Geocoder();
-          let marker;
           
           for(let i=0; i<location.length; i++) {
             geocoder.addressSearch(location[i], function(result, status) {
               if(status === kakao.maps.services.Status.OK) {
                 //- DB속 location의 주소로 위도, 경도를 받아와 마커 생성
-                marker = new kakao.maps.Marker({
+                const marker = new kakao.maps.Marker({
                   position: new kakao.maps.LatLng(result[0].y, result[0].x),
                   clickable: true,          
                 });
@@ -226,13 +222,13 @@ block content
               }
 
               cnt++;
+
               //- 동기를 위해 cnt 변수를 이용하여 데이터 갯수만큼 다 반복을 마쳐야 작동하도록 함
               if(cnt === (location.length)) {
                 //- 경도를 기준으로 정렬
                 markersInfo.sort(function(i, j) {
                   return (i.y < j.y ? -1 : i.y > i.x ? 1 : 0);
                 });
-                console.log(markersInfo);
 
                 //- 위치가 비슷한 애들끼리 모은 배열을 생성하고 최종 결과를 group 배열에 push
                 let tmpCnt = 0;
@@ -265,13 +261,14 @@ block content
             });
           }
           
-          //- 여기가 for 바깥
+          //- 위의 동작들이 다 끝나고 수행되어야 함
           setTimeout(function() {
             group.forEach(function(element) {
               //- DB속 location의 주소를 표시하는 인포윈도우 생성
               const infowindow = new kakao.maps.InfoWindow({zindex:1, removable: true});
               infowindow.setPosition(new kakao.maps.LatLng(element[0].x, element[0].y));
 
+              //- infowindow 내용
               let div = `<div style="height: 20px; border-bottom: 1px solid black;"></div>`;
               element.forEach(function(eElement) {
                 div += `<div style="width: 101%; text-align: left; margin-left: 2px; padding: 5px;">${eElement.location}</div>`;

@@ -83,7 +83,7 @@ router.get('/api/moduleSearch', function(req, res, next) {
 });
 
 router.get('/api/showMap', function(req, res, next) {
-  const query = 'SELECT deviceId, location FROM modulelist';
+  const query = 'SELECT location FROM modulelist';
 
   connection.query(query,(err, rows, fields) => {
     if(!err) {

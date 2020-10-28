@@ -271,7 +271,7 @@ block content
               //- infowindow 내용
               let div = `<div style="height: 20px; border-bottom: 1px solid black;"></div>`;
               element.forEach(function(eElement) {
-                div += `<div style="width: 101%; text-align: left; margin-left: 2px; padding: 5px;">${eElement.location}</div>`;
+                div += `<div style="width: 101%; text-align: center; margin-left: 2px; padding: 5px;">${eElement.location}</div>`;
                 kakao.maps.event.addListener(eElement.marker, 'click', function() {
                   //- 마커 클릭 시 infowindow가 map에 존재한다면 없애고, 존재하지 않는다면 infowindow를 띄움
                   if(infowindow.getMap()) {

@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const moment = require('moment');   
 const { render } = require('pug');
 const connection = require('./connection');
